@@ -43,7 +43,7 @@
           <span class="label label-info"><a href='594af663de577680f35b13183109d675.html'><span class='node-icon staruml-icon icon-UMLModel'></span>Model</a></span>
         
           <span>::</span>
-          <span class="label label-info"><a href='f70a3e7280655180897ec16740930d4b.html'><span class='node-icon staruml-icon icon-UMLPackage'></span>juego</a></span>
+          <span class="label label-info"><a href='328111ce6b04c25217703b81da747496.html'><span class='node-icon staruml-icon icon-UMLSubsystem'></span>juego</a></span>
         
           <span>::</span>
           <span class="label label-info"><a href='bb5196d4c10444f0e51e456621c194d0.html'><span class='node-icon staruml-icon icon-UMLClass'></span>Juego</a></span>
@@ -157,14 +157,18 @@
             <td>protected</td>
             <td><a href="67fa0a85869c060b3c7927cc934ace1e.html">capacidad</a></td>
             <td>Int</td>
-            <td></td>
+            <td><p>la capacidad se refiere a la cantidad maxima de jugadores que pueden jugar un juego</p>
+
+<p>este valor no puede se menor  ni igual a 0</p></td>
           </tr>
           
           <tr>
             <td>protected</td>
             <td><a href="c1c500e301b80f4cda9a46c490890bef.html">capasidadMinimima</a></td>
             <td>Int</td>
-            <td></td>
+            <td><p>la capacidad minima hace referencia a la capacidad minima que debe tener un juego para poder jugarlo</p>
+
+<p>este valor no puede se menor  ni igual a 0</p></td>
           </tr>
           
           <tr>
@@ -178,35 +182,28 @@
             <td>protected</td>
             <td><a href="6a5d906e203c828b6a11fce7749bd616.html">fechaPartida</a></td>
             <td>Date</td>
-            <td></td>
+            <td><p>la fecha va hacer el dia en que se esta jugando esa partitida para una poterior busqueda si es nesesario</p></td>
           </tr>
           
           <tr>
             <td>protected</td>
             <td><a href="30b38e733ba8e81ba70b7c78c3f50458.html">horaInicio</a></td>
             <td>Date</td>
-            <td></td>
+            <td><p>la hora inicio va hacer hora en la que se empieza la partida para una poterior busqueda si es nesesario</p></td>
           </tr>
           
           <tr>
             <td>protected</td>
             <td><a href="0491c9812f1d22380015f5dc7856fd34.html">horaFin</a></td>
             <td>Date</td>
-            <td></td>
-          </tr>
-          
-          <tr>
-            <td>protected</td>
-            <td><a href="fa11fa8707127a71ab2f18588c06e403.html">diseño</a></td>
-            <td><span class='label label-info'>none</span></td>
-            <td></td>
+            <td><p>la hora fin va hacer hora en la que se termina la partida para una poterior busqueda si es nesesario</p></td>
           </tr>
           
           <tr>
             <td>protected</td>
             <td><a href="9e9e4720033d654102580698bf59b341.html">turnoActivo</a></td>
             <td><a href='7ec1f87fa6d69992e47eb6c41c607283.html'>Jugador</a></td>
-            <td></td>
+            <td><p>turno activo es el jugador  que puede tomar accion en ese momento</p></td>
           </tr>
           
         </table>
@@ -227,13 +224,19 @@
           
           <tr>
             <td>public</td>
-            <td><a href="8a0d41591b7c5fa26a56015249437f04.html">entrarJuego()</a></td>
+            <td><a href="d68df4adf15914f453f9b3ed018e1a01.html">iniciarJuego()</a></td>
             <td></td>
           </tr>
           
           <tr>
             <td>public</td>
-            <td><a href="bcd8e58540e9bfab88868120310fcb24.html">salirJuego()</a></td>
+            <td><a href="8a0d41591b7c5fa26a56015249437f04.html">entrarSalaJuego()</a></td>
+            <td></td>
+          </tr>
+          
+          <tr>
+            <td>public</td>
+            <td><a href="bcd8e58540e9bfab88868120310fcb24.html">salirSalaJuego()</a></td>
             <td></td>
           </tr>
           
@@ -444,9 +447,9 @@
     <h3>Relationships</h3>
     <ul class="nav nav-list">
         
-        <li><a href='2626f3ce9c12b52e52643eb47bc61548.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Jugador—Juego)</a></li>
-        
         <li><a href='fc9ca924d9fcc8eb39fd0ac128620b31.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(JuegoDeCartas→Juego)</a></li>
+        
+        <li><a href='2626f3ce9c12b52e52643eb47bc61548.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Usuario—Juego)</a></li>
         
     </ul>
 </section>
