@@ -1321,7 +1321,7 @@
 											"top": 364,
 											"width": 263,
 											"height": 13,
-											"text": "#jugadores: Jugador[capasidad]",
+											"text": "#jugadores: Usuario[capasidad]",
 											"horizontalAlignment": 0
 										},
 										{
@@ -1389,7 +1389,7 @@
 											"top": 424,
 											"width": 263,
 											"height": 13,
-											"text": "#turnoActivo: Jugador",
+											"text": "#turnoActivo: Usuario",
 											"horizontalAlignment": 0
 										}
 									],
