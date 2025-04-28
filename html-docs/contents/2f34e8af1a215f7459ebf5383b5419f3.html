@@ -197,7 +197,7 @@ Si quedan varios jugadores, muestran sus cartas y se decide el ganador.</p>
           <tr>
             <td>private</td>
             <td><a href="06e73338eaed5265d67c3bd41036a174.html">dealer</a></td>
-            <td><a href='7ec1f87fa6d69992e47eb6c41c607283.html'>Jugador</a></td>
+            <td><a href='7ec1f87fa6d69992e47eb6c41c607283.html'>Usuario</a></td>
             <td></td>
           </tr>
           
@@ -253,7 +253,10 @@ Si quedan varios jugadores, muestran sus cartas y se decide el ganador.</p>
           <tr>
             <td>public</td>
             <td><a href="83ef2816f1c570fb43f9c4a3cdf3583e.html">igualar(jugador: Usuario)</a></td>
-            <td><p>Igualar la apuesta hecha por otro jugador. si </p></td>
+            <td><p>Igualar la apuesta hecha por otro jugador. si  la apuesta maxima es menor al saldo </p>
+
+<p>si la puesta maxima es mayor al saldo 
+hay dos posibilidades retirarse o ir con todo lo que tiene</p></td>
           </tr>
           
           <tr>
@@ -478,13 +481,15 @@ Si quedan varios jugadores, muestran sus cartas y se decide el ganador.</p>
     <h3>Relationships</h3>
     <ul class="nav nav-list">
         
+        <li><a href='762f58741bbca552d1d282ed42255d8c.html'><span class='node-icon staruml-icon icon-UMLDependency'></span>(CasinoControlador→Poker)</a></li>
+        
+        <li><a href='41c649f1f6b386bbfa1ed9a10deb28e6.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Usuario—Poker)</a></li>
+        
         <li><a href='4deee91f7ea4202c5bb6d577890edcb0.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(Poker→JuegoDeCartas)</a></li>
         
         <li><a href='b7e2b2fd823551958bb48621e2523069.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Etapa—Poker)</a></li>
         
-        <li><a href='41c649f1f6b386bbfa1ed9a10deb28e6.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Usuario—Poker)</a></li>
-        
-        <li><a href='762f58741bbca552d1d282ed42255d8c.html'><span class='node-icon staruml-icon icon-UMLDependency'></span>(CasinoControlador→Poker)</a></li>
+        <li><a href='2026cc03564d9c4aa19b9a554729e235.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Usuario—Poker)</a></li>
         
     </ul>
 </section>
