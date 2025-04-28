@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Juego</title>
+    <title>salaJuego</title>
     <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic|Source+Code+Pro:300,400,700' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="../assets/css/bootstrap.css">
 <link rel="stylesheet" href="../assets/css/jquery.bonsai.css">
@@ -18,7 +18,7 @@
 
       <!-- Name Title -->
 
-      <h1>Juego</h1>
+      <h1>salaJuego</h1>
 
       <!-- Type and Stereotype -->
 
@@ -46,7 +46,7 @@
           <span class="label label-info"><a href='328111ce6b04c25217703b81da747496.html'><span class='node-icon staruml-icon icon-UMLSubsystem'></span>juego</a></span>
         
           <span>::</span>
-          <span class="label label-info"><a href='bb5196d4c10444f0e51e456621c194d0.html'><span class='node-icon staruml-icon icon-UMLClass'></span>Juego</a></span>
+          <span class="label label-info"><a href='bb5196d4c10444f0e51e456621c194d0.html'><span class='node-icon staruml-icon icon-UMLClass'></span>salaJuego</a></span>
         
       </section>
 
@@ -61,7 +61,7 @@
         <h3>Description</h3>
         <div>
           
-            <span class="label label-info">none</span>
+            <p>esta clase lo que hace es  crea una sala en el servidor donde los usuarios van a jugar un juego</p>
           
         </div>
       </section>
@@ -224,19 +224,19 @@
           
           <tr>
             <td>public</td>
-            <td><a href="d68df4adf15914f453f9b3ed018e1a01.html">iniciarJuego()</a></td>
+            <td><a href="d68df4adf15914f453f9b3ed018e1a01.html">iniciarJuego(juego: Juegos)</a></td>
+            <td><p>inicia un el juego para el que se creo la sala</p></td>
+          </tr>
+          
+          <tr>
+            <td>public</td>
+            <td><a href="8a0d41591b7c5fa26a56015249437f04.html">entrarSalaJuego(jugador: Usuario)</a></td>
             <td></td>
           </tr>
           
           <tr>
             <td>public</td>
-            <td><a href="8a0d41591b7c5fa26a56015249437f04.html">entrarSalaJuego()</a></td>
-            <td></td>
-          </tr>
-          
-          <tr>
-            <td>public</td>
-            <td><a href="bcd8e58540e9bfab88868120310fcb24.html">salirSalaJuego()</a></td>
+            <td><a href="bcd8e58540e9bfab88868120310fcb24.html">salirSalaJuego(jugador: Usuario)</a></td>
             <td></td>
           </tr>
           
@@ -340,7 +340,7 @@
     
     <tr>
         <td>name</td>
-        <td>Juego</td>
+        <td>salaJuego</td>
     </tr>
     
     
@@ -436,6 +436,17 @@
 
         
         
+<section class="element-list">
+    <h3>Dependants</h3>
+    <ul class="nav nav-list">
+        
+        <li><a href='e47ef46ab4c55851cfcce7e91d483e99.html'><span class='node-icon staruml-icon icon-UMLEnumeration'></span>Juegos</a></li>
+        
+        <li><a href='4031594fcf8b95b69d33e57e2703b4af.html'><span class='node-icon staruml-icon icon-UMLClass'></span>CasinoControlador</a></li>
+        
+    </ul>
+</section>
+
 
       
 
@@ -447,9 +458,13 @@
     <h3>Relationships</h3>
     <ul class="nav nav-list">
         
-        <li><a href='fc9ca924d9fcc8eb39fd0ac128620b31.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(JuegoDeCartas→Juego)</a></li>
+        <li><a href='fc9ca924d9fcc8eb39fd0ac128620b31.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(JuegoDeCartas→salaJuego)</a></li>
         
-        <li><a href='2626f3ce9c12b52e52643eb47bc61548.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Usuario—Juego)</a></li>
+        <li><a href='2626f3ce9c12b52e52643eb47bc61548.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Usuario—salaJuego)</a></li>
+        
+        <li><a href='6af875f7c1c22ed196e698f2aad5a8f7.html'><span class='node-icon staruml-icon icon-UMLDependency'></span>(Juegos→salaJuego)</a></li>
+        
+        <li><a href='6a31a00efd9e3c7690ecd09854f4e844.html'><span class='node-icon staruml-icon icon-UMLDependency'></span>(CasinoControlador→salaJuego)</a></li>
         
     </ul>
 </section>

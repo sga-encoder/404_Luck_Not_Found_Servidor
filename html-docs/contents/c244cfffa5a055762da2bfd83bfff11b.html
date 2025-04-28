@@ -223,25 +223,25 @@
           
           <tr>
             <td>public</td>
-            <td><a href="684d638863e534f5477bdc71de8d9e46.html">pedir()</a></td>
+            <td><a href="684d638863e534f5477bdc71de8d9e46.html">pedir(jugador: Usuario)</a></td>
             <td><p>Pides otra carta para mejorar tu mano. Sin límite de cartas mientras no te pases.</p></td>
           </tr>
           
           <tr>
             <td>public</td>
-            <td><a href="577856ab1951f070e68db228cc5aa403.html">plantarse()</a></td>
+            <td><a href="577856ab1951f070e68db228cc5aa403.html">plantarse(jugador: Usuario)</a></td>
             <td><p>Terminas tu turno. Esperas al crupier.</p></td>
           </tr>
           
           <tr>
             <td>public</td>
-            <td><a href="e1cb17f21d7476a6fe39b9acd056a22b.html">doblar()</a></td>
+            <td><a href="e1cb17f21d7476a6fe39b9acd056a22b.html">doblar(jugador: Usuario)</a></td>
             <td><p>Doblas tu apuesta, recibes solo una carta adicional.Solo permitido en manos iniciales de 9, 10 u 11.</p></td>
           </tr>
           
           <tr>
             <td>public</td>
-            <td><a href="647b83d5860fa30dd742bcb0097131ff.html">separar()</a></td>
+            <td><a href="647b83d5860fa30dd742bcb0097131ff.html">separar(jugador: Usuario)</a></td>
             <td><p>Separas dos cartas del mismo valor en dos manos distintas.
 Solo una vez por mano. 
 Solo una carta adicional por mano separada.
@@ -252,7 +252,7 @@ Solo se considera un 21 &quot;normal&quot;, y paga 1:1, no 3:2.</p></td>
           
           <tr>
             <td>public</td>
-            <td><a href="6ba267f9f5870d82accbe0c30f46fc2f.html">seguro()</a></td>
+            <td><a href="6ba267f9f5870d82accbe0c30f46fc2f.html">seguro(jugador: Usuario, cantidadApostar: Int)</a></td>
             <td><p>Apuesta lateral si el crupier muestra un As. Paga 2:1 si el crupier hace Blackjack.
 Si el crupier muestra un As, puedes hacer una apuesta de hasta la mitad de tu apuesta inicial.</p>
 
@@ -263,7 +263,7 @@ Si el crupier muestra un As, puedes hacer una apuesta de hasta la mitad de tu ap
           
           <tr>
             <td>public</td>
-            <td><a href="74cb482247aa4c2723dc517234d58170.html">retirarse()</a></td>
+            <td><a href="74cb482247aa4c2723dc517234d58170.html">retirarse(jugador: Usuario)</a></td>
             <td></td>
           </tr>
           
@@ -463,6 +463,15 @@ Si el crupier muestra un As, puedes hacer una apuesta de hasta la mitad de tu ap
 
         
         
+<section class="element-list">
+    <h3>Dependants</h3>
+    <ul class="nav nav-list">
+        
+        <li><a href='4031594fcf8b95b69d33e57e2703b4af.html'><span class='node-icon staruml-icon icon-UMLClass'></span>CasinoControlador</a></li>
+        
+    </ul>
+</section>
+
 
       
 
@@ -475,6 +484,8 @@ Si el crupier muestra un As, puedes hacer una apuesta de hasta la mitad de tu ap
     <ul class="nav nav-list">
         
         <li><a href='e360779000289684d2f373aa257ce48a.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(BlackJack→JuegoDeCartas)</a></li>
+        
+        <li><a href='5488550272e1115ff9b4b68121b895e2.html'><span class='node-icon staruml-icon icon-UMLDependency'></span>(CasinoControlador→BlackJack)</a></li>
         
     </ul>
 </section>

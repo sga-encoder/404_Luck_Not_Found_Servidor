@@ -215,6 +215,13 @@ Si quedan varios jugadores, muestran sus cartas y se decide el ganador.</p>
             <td></td>
           </tr>
           
+          <tr>
+            <td>private</td>
+            <td><a href="7b8d508d7fc94f6d15b551b79ec1b3fa.html">poso</a></td>
+            <td>Int</td>
+            <td><p>es la suma de todas las apuestas</p></td>
+          </tr>
+          
         </table>
       </section>
       
@@ -233,26 +240,26 @@ Si quedan varios jugadores, muestran sus cartas y se decide el ganador.</p>
           
           <tr>
             <td>public</td>
-            <td><a href="9cb29e814a48e157fdfa631cb118600b.html">retirarse()</a></td>
+            <td><a href="9cb29e814a48e157fdfa631cb118600b.html">retirarse(jugador: Usuario)</a></td>
             <td><p>Tirar tus cartas y salir de la mano</p></td>
           </tr>
           
           <tr>
             <td>public</td>
-            <td><a href="271b11532890c893dcabe07922c8537f.html">pasar()</a></td>
+            <td><a href="271b11532890c893dcabe07922c8537f.html">pasar(jugador: Usuario)</a></td>
             <td><p>No apostar, pero permanecer en el juego si nadie apostó antes.</p></td>
           </tr>
           
           <tr>
             <td>public</td>
-            <td><a href="83ef2816f1c570fb43f9c4a3cdf3583e.html">igualar()</a></td>
-            <td><p>Igualar la apuesta hecha por otro jugador.</p></td>
+            <td><a href="83ef2816f1c570fb43f9c4a3cdf3583e.html">igualar(jugador: Usuario)</a></td>
+            <td><p>Igualar la apuesta hecha por otro jugador. si </p></td>
           </tr>
           
           <tr>
             <td>public</td>
-            <td><a href="34d0ac8615da16e191faadc101d53d06.html">subir()</a></td>
-            <td><p>Aumentar la apuesta actual.</p></td>
+            <td><a href="34d0ac8615da16e191faadc101d53d06.html">subir(jugador: Usuario, cantidadApostar: Int)</a></td>
+            <td><p>Aumentar la apuesta actual utilizando el metodo abstracto apostar </p></td>
           </tr>
           
         </table>
@@ -451,6 +458,15 @@ Si quedan varios jugadores, muestran sus cartas y se decide el ganador.</p>
 
         
         
+<section class="element-list">
+    <h3>Dependants</h3>
+    <ul class="nav nav-list">
+        
+        <li><a href='4031594fcf8b95b69d33e57e2703b4af.html'><span class='node-icon staruml-icon icon-UMLClass'></span>CasinoControlador</a></li>
+        
+    </ul>
+</section>
+
 
       
 
@@ -467,6 +483,8 @@ Si quedan varios jugadores, muestran sus cartas y se decide el ganador.</p>
         <li><a href='b7e2b2fd823551958bb48621e2523069.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Etapa—Poker)</a></li>
         
         <li><a href='41c649f1f6b386bbfa1ed9a10deb28e6.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Usuario—Poker)</a></li>
+        
+        <li><a href='762f58741bbca552d1d282ed42255d8c.html'><span class='node-icon staruml-icon icon-UMLDependency'></span>(CasinoControlador→Poker)</a></li>
         
     </ul>
 </section>

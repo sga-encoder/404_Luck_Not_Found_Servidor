@@ -91,7 +91,7 @@
     <h3>Generalized Elements</h3>
     <ul class="nav nav-list">
         
-        <li><a href='bb5196d4c10444f0e51e456621c194d0.html'><span class='node-icon staruml-icon icon-UMLClass'></span>Juego</a></li>
+        <li><a href='bb5196d4c10444f0e51e456621c194d0.html'><span class='node-icon staruml-icon icon-UMLClass'></span>salaJuego</a></li>
         
     </ul>
 </section>
@@ -171,28 +171,35 @@
             <td>protected</td>
             <td><a href="6a5b49cc8ad2870104c1cc61148460de.html">mazo</a></td>
             <td><a href='e3c38363ba216d5a3d28dc93c7c57b5a.html'>Mazo</a></td>
-            <td></td>
+            <td><p>contiene una instancia del mazo ya barajado listo para poder jugar con el</p></td>
           </tr>
           
           <tr>
             <td>protected</td>
             <td><a href="1617136cb74b20ea2e25c8c9403dc3c5.html">motoDescartes</a></td>
             <td><a href='0ec3fb835581980f40f36355d751e8ff.html'>Carta</a></td>
-            <td></td>
+            <td><p>contiene una pila de cartas donde se ponen las cartas que ya se utilizaron</p></td>
           </tr>
           
           <tr>
             <td>protected</td>
             <td><a href="426ed2edc4f38b85e7eebc22e3568378.html">baseMesa</a></td>
             <td><span class='label label-info'>none</span></td>
-            <td></td>
+            <td><p>es la puesta minima que hay para poder participar en la ronda</p></td>
           </tr>
           
           <tr>
             <td>protected</td>
             <td><a href="b19d283ed6047c18e28dc6a1736382fa.html">apuestas</a></td>
             <td>Long</td>
-            <td></td>
+            <td><p>aqui contiene todas las apuestas individuales de cada jugador</p></td>
+          </tr>
+          
+          <tr>
+            <td>protected</td>
+            <td><a href="5626471be633c3d764cee1e528312619.html">manoJugadores</a></td>
+            <td><a href='0ec3fb835581980f40f36355d751e8ff.html'>Carta</a></td>
+            <td><p>se contiene todas las cartas que el usuario tiene su mano</p></td>
           </tr>
           
         </table>
@@ -214,19 +221,19 @@
           <tr>
             <td>public</td>
             <td><a href="0dbbb0ef404b6995a42d7f114eb234ae.html">repartirCartas()</a></td>
-            <td></td>
+            <td><p>repate las cartas de manera determinada para cada juego y las agrega a la manoJugadore</p></td>
           </tr>
           
           <tr>
             <td>public</td>
-            <td><a href="2395a7175b1a76fcc0ea21de2295112f.html">pagarApuesta()</a></td>
-            <td></td>
+            <td><a href="2395a7175b1a76fcc0ea21de2295112f.html">pagarApuesta(jugador: Usuario)</a></td>
+            <td><p>aumenta el saldo de los usuario/s que ganaron</p></td>
           </tr>
           
           <tr>
             <td>public</td>
-            <td><a href="090dab71ea8e464b156ff228c04d0d13.html">apostar()</a></td>
-            <td></td>
+            <td><a href="090dab71ea8e464b156ff228c04d0d13.html">apostar(jugador: Usuario, cantidadApostar: Int)</a></td>
+            <td><p>aumenta la puesta del Jugador  si el tiene saldo es mayor a la cantidadApostar</p></td>
           </tr>
           
         </table>
@@ -442,7 +449,7 @@
         
         <li><a href='e360779000289684d2f373aa257ce48a.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(BlackJack→JuegoDeCartas)</a></li>
         
-        <li><a href='fc9ca924d9fcc8eb39fd0ac128620b31.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(JuegoDeCartas→Juego)</a></li>
+        <li><a href='fc9ca924d9fcc8eb39fd0ac128620b31.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(JuegoDeCartas→salaJuego)</a></li>
         
         <li><a href='8ac8c1476b915eb2e09239ff698d9956.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(Carta—JuegoDeCartas)</a></li>
         
@@ -459,7 +466,7 @@
     <h3>Owned Elements</h3>
     <ul class="nav nav-list">
         
-        <li><a href='fc9ca924d9fcc8eb39fd0ac128620b31.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(JuegoDeCartas→Juego)</a></li>
+        <li><a href='fc9ca924d9fcc8eb39fd0ac128620b31.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(JuegoDeCartas→salaJuego)</a></li>
         
     </ul>
 </section>
