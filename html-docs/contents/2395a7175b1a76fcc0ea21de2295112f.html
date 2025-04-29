@@ -46,10 +46,7 @@
           <span class="label label-info"><a href='328111ce6b04c25217703b81da747496.html'><span class='node-icon staruml-icon icon-UMLSubsystem'></span>juego</a></span>
         
           <span>::</span>
-          <span class="label label-info"><a href='cb4e16d40a34817d97314ed39784e6d3.html'><span class='node-icon staruml-icon icon-UMLSubsystem'></span>juegoDeCartas</a></span>
-        
-          <span>::</span>
-          <span class="label label-info"><a href='5c7c9a446e0a355a425e942e5e03ea17.html'><span class='node-icon staruml-icon icon-UMLClass'></span>JuegoDeCartas</a></span>
+          <span class="label label-info"><a href='bb5196d4c10444f0e51e456621c194d0.html'><span class='node-icon staruml-icon icon-UMLClass'></span>salaJuego</a></span>
         
           <span>::</span>
           <span class="label label-info"><a href='2395a7175b1a76fcc0ea21de2295112f.html'><span class='node-icon staruml-icon icon-UMLOperation'></span>pagarApuesta</a></span>
@@ -67,7 +64,8 @@
         <h3>Description</h3>
         <div>
           
-            <p>aumenta el saldo de los usuario/s que ganaron</p>
+            <p>aumenta el saldo de los usuario/s que ganaron
+y lo actualiza en la base de datos del usuario</p>
           
         </div>
       </section>
@@ -150,6 +148,13 @@
             <td>in</td>
             <td><a href="c4c5c10451076e9b938ed9ddc0d1d0d6.html">jugador</a></td>
             <td><a href='7ec1f87fa6d69992e47eb6c41c607283.html'><span class='node-icon staruml-icon icon-UMLClass'></span>Usuario</a></td>
+            <td></td>
+          </tr>
+          
+          <tr>
+            <td>in</td>
+            <td><a href="3cd14394afde3dbec266fb44c277c768.html">pago</a></td>
+            <td>Int</td>
             <td></td>
           </tr>
           
@@ -299,6 +304,9 @@
             
             <a href='c4c5c10451076e9b938ed9ddc0d1d0d6.html'><span class='node-icon staruml-icon icon-UMLParameter'></span>jugador</a>
             
+            <span>, </span>
+            <a href='3cd14394afde3dbec266fb44c277c768.html'><span class='node-icon staruml-icon icon-UMLParameter'></span>pago</a>
+            
         </td>
     </tr>
     
@@ -337,7 +345,7 @@
     
     <tr>
         <td>isAbstract</td>
-        <td><span class='label label-info'>true</span></td>
+        <td><span class='label label-info'>false</span></td>
     </tr>
     
     

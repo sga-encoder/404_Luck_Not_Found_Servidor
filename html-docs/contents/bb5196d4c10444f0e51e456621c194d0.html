@@ -61,7 +61,7 @@
         <h3>Description</h3>
         <div>
           
-            <p>esta clase lo que hace es  crea una sala en el servidor donde los usuarios van a jugar un juego</p>
+            <p>Esta clase crea una sala en el servidor donde los usuarios van a jugar un juego</p>
           
         </div>
       </section>
@@ -157,16 +157,16 @@
             <td>protected</td>
             <td><a href="67fa0a85869c060b3c7927cc934ace1e.html">capacidad</a></td>
             <td>Int</td>
-            <td><p>la capacidad se refiere a la cantidad maxima de jugadores que pueden jugar un juego</p>
+            <td><p>la capacidad se refiere a la cantidad maxima de jugadores que pueden entrar a la sala sin quedar en la lista de espera</p>
 
-<p>este valor no puede se menor  ni igual a 0</p></td>
+<p>este valor no puede se menor ni igual a 0</p></td>
           </tr>
           
           <tr>
             <td>protected</td>
-            <td><a href="c1c500e301b80f4cda9a46c490890bef.html">capasidadMinimima</a></td>
+            <td><a href="c1c500e301b80f4cda9a46c490890bef.html">capacidadMinimima</a></td>
             <td>Int</td>
-            <td><p>la capacidad minima hace referencia a la capacidad minima que debe tener un juego para poder jugarlo</p>
+            <td><p>Hace referencia a la capacidad minima que debe tener la sala para poder jugar al juego</p>
 
 <p>este valor no puede se menor  ni igual a 0</p></td>
           </tr>
@@ -175,28 +175,7 @@
             <td>protected</td>
             <td><a href="2b9afc97bd678501bf151ef68a2293e1.html">jugadores</a></td>
             <td><a href='7ec1f87fa6d69992e47eb6c41c607283.html'>Usuario</a></td>
-            <td></td>
-          </tr>
-          
-          <tr>
-            <td>protected</td>
-            <td><a href="6a5d906e203c828b6a11fce7749bd616.html">fechaPartida</a></td>
-            <td>Date</td>
-            <td><p>la fecha va hacer el dia en que se esta jugando esa partitida para una poterior busqueda si es nesesario</p></td>
-          </tr>
-          
-          <tr>
-            <td>protected</td>
-            <td><a href="30b38e733ba8e81ba70b7c78c3f50458.html">horaInicio</a></td>
-            <td>Date</td>
-            <td><p>la hora inicio va hacer hora en la que se empieza la partida para una poterior busqueda si es nesesario</p></td>
-          </tr>
-          
-          <tr>
-            <td>protected</td>
-            <td><a href="0491c9812f1d22380015f5dc7856fd34.html">horaFin</a></td>
-            <td>Date</td>
-            <td><p>la hora fin va hacer hora en la que se termina la partida para una poterior busqueda si es nesesario</p></td>
+            <td><p>va a contener lo usuarios que estan jugando en el momento</p></td>
           </tr>
           
           <tr>
@@ -204,6 +183,35 @@
             <td><a href="9e9e4720033d654102580698bf59b341.html">turnoActivo</a></td>
             <td><a href='7ec1f87fa6d69992e47eb6c41c607283.html'>Usuario</a></td>
             <td><p>turno activo es el jugador  que puede tomar accion en ese momento</p></td>
+          </tr>
+          
+          <tr>
+            <td>protected</td>
+            <td><a href="6b97ddaec6b12f63a84d269f36e5c0bf.html">historial</a></td>
+            <td>JSONArray</td>
+            <td><p>El índice X del array Jugadores correspondera al indice X del JSONArray de historial
+se pontran los resultados de cada ronda entre eltiempo que estubo en la sala</p></td>
+          </tr>
+          
+          <tr>
+            <td>private</td>
+            <td><a href="30b38e733ba8e81ba70b7c78c3f50458.html">fechaHoraInicio</a></td>
+            <td>Date</td>
+            <td><p>la hora inicio va hacer hora en la que entras los primeros usuarios a jugar un juego</p></td>
+          </tr>
+          
+          <tr>
+            <td>private</td>
+            <td><a href="0491c9812f1d22380015f5dc7856fd34.html">fechaHoraFin</a></td>
+            <td>Date</td>
+            <td><p>la hora fin va hacer hora en la que la sala se queda vacia y no hay nadie en cola</p></td>
+          </tr>
+          
+          <tr>
+            <td>private</td>
+            <td><a href="78c334656ccb6ec9f51f18183dfeaa51.html">listaEspera</a></td>
+            <td><a href='7ec1f87fa6d69992e47eb6c41c607283.html'>Usuario</a></td>
+            <td><p>son los jugadores que estan a la espera de que la sala tenga disponibilidad</p></td>
           </tr>
           
         </table>
@@ -231,13 +239,33 @@
           <tr>
             <td>public</td>
             <td><a href="8a0d41591b7c5fa26a56015249437f04.html">entrarSalaJuego(jugador: Usuario)</a></td>
-            <td></td>
+            <td><p>un jugador puede entrar a la sala si getJugadoresActivos() es menor a capacidad, entoces se ingresara a jugadores. sino el jugador se ingresar a la listaEspera</p></td>
+          </tr>
+          
+          <tr>
+            <td>private</td>
+            <td><a href="8ec8013e80710197e3edd33fb02974c7.html">entrarSalaJuego(jugador: Usuario, index: Int)</a></td>
+            <td><p>se ingresara el jugador al el array Jugadore en un index espesifico</p></td>
+          </tr>
+          
+          <tr>
+            <td>public</td>
+            <td><a href="2395a7175b1a76fcc0ea21de2295112f.html">pagarApuesta(jugador: Usuario, pago: Int)</a></td>
+            <td><p>aumenta el saldo de los usuario/s que ganaron
+y lo actualiza en la base de datos del usuario</p></td>
           </tr>
           
           <tr>
             <td>public</td>
             <td><a href="bcd8e58540e9bfab88868120310fcb24.html">salirSalaJuego(jugador: Usuario)</a></td>
-            <td></td>
+            <td><p>se eliminara del array jugadores el jugador que salio de la sala,
+y se guardara su historial de la partida en su Usuario y  se borrarar su historial en la sala. y se ejecutara entrarSalaJuego(listaEspera[0], indice del jugador que salio)</p></td>
+          </tr>
+          
+          <tr>
+            <td>public</td>
+            <td><a href="7f1f2d9c027cd95ff898491aee44a2b1.html">getJugadoresActivos()</a></td>
+            <td><p>se obtiene apartir del tamaño de array jugadores</p></td>
           </tr>
           
         </table>
@@ -444,6 +472,8 @@
         
         <li><a href='e47ef46ab4c55851cfcce7e91d483e99.html'><span class='node-icon staruml-icon icon-UMLEnumeration'></span>Juegos</a></li>
         
+        <li><a href='a73cf660b48aed303e11eef044b70510.html'><span class='node-icon staruml-icon icon-UMLClass'></span>salaJuegoServicio</a></li>
+        
     </ul>
 </section>
 
@@ -466,6 +496,10 @@
         
         <li><a href='6af875f7c1c22ed196e698f2aad5a8f7.html'><span class='node-icon staruml-icon icon-UMLDependency'></span>(Juegos→salaJuego)</a></li>
         
+        <li><a href='877ac1f4b6be053fb398198369fd3241.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(salaJuego—CasinoControlador)</a></li>
+        
+        <li><a href='5b7f6c9c23ff968acd1b59637a1f5054.html'><span class='node-icon staruml-icon icon-UMLDependency'></span>(salaJuegoServicio→salaJuego)</a></li>
+        
     </ul>
 </section>
 
@@ -475,6 +509,15 @@
 
       
       
+<section class="element-list">
+    <h3>Owned Elements</h3>
+    <ul class="nav nav-list">
+        
+        <li><a href='877ac1f4b6be053fb398198369fd3241.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(salaJuego—CasinoControlador)</a></li>
+        
+    </ul>
+</section>
+
 
 
     </div>

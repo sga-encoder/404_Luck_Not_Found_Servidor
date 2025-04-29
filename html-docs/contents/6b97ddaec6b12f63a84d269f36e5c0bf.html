@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>guardarDatos</title>
+    <title>historial</title>
     <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic|Source+Code+Pro:300,400,700' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="../assets/css/bootstrap.css">
 <link rel="stylesheet" href="../assets/css/jquery.bonsai.css">
@@ -18,14 +18,14 @@
 
       <!-- Name Title -->
 
-      <h1>guardarDatos</h1>
+      <h1>historial</h1>
 
       <!-- Type and Stereotype -->
 
       <section style="margin-top: .5em;">
         <span class="alert alert-info">
-          <span class="node-icon staruml-icon icon-UMLOperation"></span>
-          UMLOperation
+          <span class="node-icon staruml-icon icon-UMLAttribute"></span>
+          UMLAttribute
         </span>
         
       </section>
@@ -43,10 +43,13 @@
           <span class="label label-info"><a href='594af663de577680f35b13183109d675.html'><span class='node-icon staruml-icon icon-UMLModel'></span>Model</a></span>
         
           <span>::</span>
-          <span class="label label-info"><a href='a73cf660b48aed303e11eef044b70510.html'><span class='node-icon staruml-icon icon-UMLClass'></span>salaJuegoServicio</a></span>
+          <span class="label label-info"><a href='328111ce6b04c25217703b81da747496.html'><span class='node-icon staruml-icon icon-UMLSubsystem'></span>juego</a></span>
         
           <span>::</span>
-          <span class="label label-info"><a href='c2e9dd59bbc9a79e12071aa655317dd7.html'><span class='node-icon staruml-icon icon-UMLOperation'></span>guardarDatos</a></span>
+          <span class="label label-info"><a href='bb5196d4c10444f0e51e456621c194d0.html'><span class='node-icon staruml-icon icon-UMLClass'></span>salaJuego</a></span>
+        
+          <span>::</span>
+          <span class="label label-info"><a href='6b97ddaec6b12f63a84d269f36e5c0bf.html'><span class='node-icon staruml-icon icon-UMLAttribute'></span>historial</a></span>
         
       </section>
 
@@ -61,7 +64,8 @@
         <h3>Description</h3>
         <div>
           
-            <span class="label label-info">none</span>
+            <p>El índice X del array Jugadores correspondera al indice X del JSONArray de historial
+se pontran los resultados de cada ronda entre eltiempo que estubo en la sala</p>
           
         </div>
       </section>
@@ -215,7 +219,7 @@
     
     <tr>
         <td>name</td>
-        <td>guardarDatos</td>
+        <td>historial</td>
     </tr>
     
     
@@ -239,7 +243,7 @@
     
     <tr>
         <td>visibility</td>
-        <td>public</td>
+        <td>protected</td>
     </tr>
     
     
@@ -267,10 +271,8 @@
     
     
     <tr>
-        <td>parameters</td>
-        <td>
-            
-        </td>
+        <td>type</td>
+        <td>JSONArray</td>
     </tr>
     
     
@@ -278,45 +280,7 @@
     
     
     <tr>
-        <td>raisedExceptions</td>
-        <td>
-            
-        </td>
-    </tr>
-    
-    
-    
-    
-    
-    <tr>
-        <td>concurrency</td>
-        <td>sequential</td>
-    </tr>
-    
-    
-    
-    
-    
-    <tr>
-        <td>isQuery</td>
-        <td><span class='label label-info'>false</span></td>
-    </tr>
-    
-    
-    
-    
-    
-    <tr>
-        <td>isAbstract</td>
-        <td><span class='label label-info'>false</span></td>
-    </tr>
-    
-    
-    
-    
-    
-    <tr>
-        <td>specification</td>
+        <td>multiplicity</td>
         <td></td>
     </tr>
     
@@ -324,7 +288,64 @@
     
     
     
+    <tr>
+        <td>isReadOnly</td>
+        <td><span class='label label-info'>false</span></td>
+    </tr>
     
+    
+    
+    
+    
+    <tr>
+        <td>isOrdered</td>
+        <td><span class='label label-info'>false</span></td>
+    </tr>
+    
+    
+    
+    
+    
+    <tr>
+        <td>isUnique</td>
+        <td><span class='label label-info'>false</span></td>
+    </tr>
+    
+    
+    
+    
+    
+    <tr>
+        <td>defaultValue</td>
+        <td>[]</td>
+    </tr>
+    
+    
+    
+    
+    
+    <tr>
+        <td>isDerived</td>
+        <td><span class='label label-info'>false</span></td>
+    </tr>
+    
+    
+    
+    
+    
+    <tr>
+        <td>aggregation</td>
+        <td>none</td>
+    </tr>
+    
+    
+    
+    
+    
+    <tr>
+        <td>isID</td>
+        <td><span class='label label-info'>false</span></td>
+    </tr>
     
     
     
