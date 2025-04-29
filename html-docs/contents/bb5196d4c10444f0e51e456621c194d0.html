@@ -84,6 +84,15 @@
       
         
         
+<section class="element-list">
+    <h3>Generalized Elements</h3>
+    <ul class="nav nav-list">
+        
+        <li><a href='f2ef764eae88fc5d0fa4b082a2d06989.html'><span class='node-icon staruml-icon icon-UMLClass'></span>KnuckleBones</a></li>
+        
+    </ul>
+</section>
+
 
 
         
@@ -93,6 +102,8 @@
     <ul class="nav nav-list">
         
         <li><a href='5c7c9a446e0a355a425e942e5e03ea17.html'><span class='node-icon staruml-icon icon-UMLClass'></span>JuegoDeCartas</a></li>
+        
+        <li><a href='f2ef764eae88fc5d0fa4b082a2d06989.html'><span class='node-icon staruml-icon icon-UMLClass'></span>KnuckleBones</a></li>
         
     </ul>
 </section>
@@ -212,6 +223,15 @@ se pontran los resultados de cada ronda entre eltiempo que estubo en la sala</p>
             <td><a href="78c334656ccb6ec9f51f18183dfeaa51.html">listaEspera</a></td>
             <td><a href='7ec1f87fa6d69992e47eb6c41c607283.html'>Usuario</a></td>
             <td><p>son los jugadores que estan a la espera de que la sala tenga disponibilidad</p></td>
+          </tr>
+          
+          <tr>
+            <td>protected</td>
+            <td><a href="b19d283ed6047c18e28dc6a1736382fa.html">apuestas</a></td>
+            <td>Long</td>
+            <td><p>El índice X del array Jugadores correspondera al indice X del array de apuestas</p>
+
+<p>aqui contiene todas las apuestas individuales de cada jugador</p></td>
           </tr>
           
         </table>
@@ -501,6 +521,10 @@ se comparara el saldo del jugador que acaba de salir de la sala, con el jugadorM
         
         <li><a href='5b7f6c9c23ff968acd1b59637a1f5054.html'><span class='node-icon staruml-icon icon-UMLDependency'></span>(salaJuegoServicio→salaJuego)</a></li>
         
+        <li><a href='d128545c5664b6ab298b75639cce3c61.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(salaJuego→KnuckleBones)</a></li>
+        
+        <li><a href='593c30de583840d274b077df79ee26f8.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(KnuckleBones→salaJuego)</a></li>
+        
     </ul>
 </section>
 
@@ -515,6 +539,8 @@ se comparara el saldo del jugador que acaba de salir de la sala, con el jugadorM
     <ul class="nav nav-list">
         
         <li><a href='877ac1f4b6be053fb398198369fd3241.html'><span class='node-icon staruml-icon icon-UMLAssociation'></span>(salaJuego—CasinoControlador)</a></li>
+        
+        <li><a href='d128545c5664b6ab298b75639cce3c61.html'><span class='node-icon staruml-icon icon-UMLGeneralization'></span>(salaJuego→KnuckleBones)</a></li>
         
     </ul>
 </section>
