@@ -28,11 +28,33 @@ class Usuario:
 
     def __init__(
         self,
+        id: str,
         nombre: str,
         apellido: str,
         saldo: float = 0.0,
         total_apostado: float = 0.0,
+        historial: list = [],
     ) -> None:
+        """
+        Inicializa un nuevo usuario
+
+        Args:
+            id (str): Identificador único del usuario
+            nombre (str): Nombre del usuario
+            apellido (str): Apellido del usuario
+            saldo (float, optional): Saldo inicial. Por defecto 0.0
+            total_apostado (float, optional): Total apostado inicial. Por defecto 0.0
+            historial (list, optional): Historial de transacciones. Por defecto []
+        """
+        self.set_id(id) 
+        self.set_nombre(nombre)
+        self.set_apellido(apellido)
+        self.set_saldo(saldo)
+        self.set_total_apostado(total_apostado)
+        self.__set_historial(historial)
+        
+    @classmethod
+    def simple_user(nombre: str, apellido: str, saldo: float = 0.0) -> None:
         """
         Inicializa un nuevo usuario
 
@@ -40,14 +62,33 @@ class Usuario:
             nombre (str): Nombre del usuario
             apellido (str): Apellido del usuario
             saldo (float, optional): Saldo inicial. Por defecto 0.0
-            total_apostado (float, optional): Total apostado inicial. Por defecto 0.0
         """
+        self.set_id()
         self.set_nombre(nombre)
         self.set_apellido(apellido)
-        self.__generar_id()
         self.set_saldo(saldo)
-        self.set_total_apostado(total_apostado)
+        self.set_total_apostado(0.0)
         self.__set_historial([])
+        
+    @classmethod
+    def from_dict(cls, data: dict):
+        """
+        Crea una instancia de Usuario a partir de un diccionario
+
+        Args:
+            data (dict): Diccionario con los datos del usuario
+
+        Returns:
+            Usuario: Nueva instancia de Usuario
+        """
+        id = data.get('id', '')
+        nombre = data.get('nombre', '')
+        apellido = data.get('apellido', '')
+        saldo = data.get('saldo', 0.0)
+        total_apostado = data.get('total_apostado', 0.0)
+        historial = data.get('historial', [])
+        
+        return cls(id, nombre, apellido, saldo, total_apostado, historial)
 
     def get_id(self) -> str:
         """Retorna el ID del usuario"""
@@ -229,6 +270,22 @@ class Usuario:
                 "El monto a disminuir debe ser positivo y no puede ser mayor al saldo actual"
             )
         self.__saldo -= monto
+        
+    def to_dict(self) -> dict:
+        """
+        Convierte el objeto Usuario en un diccionario
+
+        Returns:
+            dict: Diccionario con los atributos del objeto Usuario
+        """
+        return {
+            "id": self.__id,
+            "nombre": self.__nombre,
+            "apellido": self.__apellido,
+            "saldo": self.__saldo,
+            "total_apostado": self.__total_apostado,
+            "historial": self.__historial
+        }
 
     def __repr__(self):
         return (

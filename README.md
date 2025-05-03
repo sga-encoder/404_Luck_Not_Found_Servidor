@@ -27,12 +27,13 @@ Casino-de-Terminal
 
 ```
 
-## prerequisitos
-estos son los programas que necesitas para poder instalar el proyecto todo esto se recomendan hacerlo con powershell como administrador
+### Prerrequisitos
 
-### scoop
+Estos son los programas que necesitas para poder instalar el proyecto. Se recomienda ejecutar estos comandos en PowerShell como administrador.
 
-primero instalamos scoop que es un gestor de paquetes para windows
+### Scoop
+
+Primero, instala Scoop, que es un gestor de paquetes para Windows:
 
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
@@ -41,7 +42,7 @@ Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 
 ### python
 
-instalamos python con scoop
+Para instalar Python, utilizaremos `scoop`, ejecuta el siguiente comando en PowerShell:
 
 ```powershell
 scoop install python
@@ -49,7 +50,7 @@ scoop install python
 
 ### pipx
 
-instalamos pipx con scoop que es un gestor de paquetes para python
+instalamos `pipx` con `scoop` que es un gestor de paquetes para python
 
 ```powershell
 scoop install pipx
@@ -58,21 +59,29 @@ pipx ensurepath
 
 ### potry
 
-instalamos potry con pipx que es un gestor de paquetes para python que lo que hace es crear un entorno virtual para cada proyecto
+instalamos `poetry` con `pipx` que es un gestor de paquetes para python que lo que hace es crear un entorno virtual para cada proyecto
 
 ```powershell
 pipx install poetry
 ```
 
-## instalar el proyecto
+## Instalar el Proyecto
+
+Clona el repositorio y navega al directorio del proyecto:
 
 ```powershell
 git clone git@github.com:sga-encoder/Casino-Virtual.git
 cd Casino-Virtual
+```
+luego, instalamos las dependencias usando potry
+
+```powershell
 poetry install
 ```
 
-### correr el proyecto
+### Correr el Proyecto
+
+Para ejecutar el proyecto, utiliza el siguiente comando:
 
 ```powershell
 poetry run python main.py
