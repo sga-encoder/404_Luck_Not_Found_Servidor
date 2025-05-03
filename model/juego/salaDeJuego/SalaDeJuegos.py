@@ -1,4 +1,4 @@
-from .Usuario import Usuario
+from model.usuario.Usuario import Usuario
 from .KnuckleBones import KnuckleBones
 import json
 from typing import List, Dict
@@ -15,5 +15,3 @@ class SaladeJuegos:
     # fechaHoraFin es un metodo
     listaEspera = list
     apuestas: int
-
-
