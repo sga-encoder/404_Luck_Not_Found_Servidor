@@ -1,5 +1,3 @@
-# Contenido del archivo README.md
-
 # Mi Proyecto Python
 
 Este es un proyecto de ejemplo en Python que permite instalar paquetes y contiene una estructura básica para el desarrollo y las pruebas.
@@ -7,42 +5,75 @@ Este es un proyecto de ejemplo en Python que permite instalar paquetes y contien
 ## Estructura del Proyecto
 
 ```
-mi-proyecto-python
+Casino-de-Terminal
 ├── src
 │   ├── __init__.py
-│   └── main.py
+│   ├── main.py
+│   ├── model
+│   │   ├── salaDeJuego
+│   │   │    ├── enums
+│   │   │    └── juego
+│   │   │       └── juegosDeCartas
+│   │   └── usuario
+│   └── Utils
 ├── tests
 │   ├── __init__.py
 │   └── test_main.py
 ├── README.md
-├── requirements.txt
-└── setup.py
-```
-
-## Instalación
-
-Para instalar las dependencias del proyecto, ejecute el siguiente comando:
+├── pyproject.toml
+├── setup.py
+├── .gitignore
+└── install.md
 
 ```
-pip install -r requirements.txt
+
+## prerequisitos
+estos son los programas que necesitas para poder instalar el proyecto todo esto se recomendan hacerlo con powershell como administrador
+
+### scoop
+
+primero instalamos scoop que es un gestor de paquetes para windows
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression
 ```
 
-## Uso
+### python
 
-Para ejecutar la aplicación, utilice el siguiente comando:
+instalamos python con scoop
 
-```
- python -m src.main 
-```
-
-## Pruebas
-
-Para ejecutar las pruebas unitarias, puede usar `unittest` o `pytest`. Por ejemplo:
-
-```
-pytest tests/test_main.py
+```powershell
+scoop install python
 ```
 
-## Contribuciones
+### pipx
 
-Las contribuciones son bienvenidas. Si desea contribuir, por favor abra un issue o un pull request.
+instalamos pipx con scoop que es un gestor de paquetes para python
+
+```powershell
+scoop install pipx
+pipx ensurepath
+```
+
+### potry
+
+instalamos potry con pipx que es un gestor de paquetes para python que lo que hace es crear un entorno virtual para cada proyecto
+
+```powershell
+pipx install poetry
+```
+
+## instalar el proyecto
+
+```powershell
+git clone git@github.com:sga-encoder/Casino-Virtual.git
+cd Casino-Virtual
+poetry install
+```
+
+### correr el proyecto
+
+```powershell
+poetry run python main.py
+```
