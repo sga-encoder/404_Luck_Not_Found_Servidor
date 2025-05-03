@@ -1,4 +1,4 @@
-"""
+""""
 Módulo de utilidades para el Casino
 Proporciona funciones auxiliares utilizadas en todo el proyecto
 """
@@ -21,6 +21,3 @@ def generador_random(minimo: int, maximo: int) -> int:
         7
     """
     return secrets.randbelow(maximo - minimo + 1) + minimo
-  
-resultado = generador_random(100, 999)
-print(resultado)

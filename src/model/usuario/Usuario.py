@@ -2,7 +2,8 @@
 Módulo que define la clase Usuario del Casino
 """
 
-from ...utils.Utils import generador_random
+
+from src.utils.Util import generador_random
 
 
 class Usuario:
@@ -80,7 +81,7 @@ class Usuario:
         self.__id = (
             f"{self.__nombre[0].upper()}{self.__apellido[0].upper()}{num_random}"
         )
-        
+
     def set_id(self, id: str) -> None:
         """
         Establece el ID del usuario
@@ -97,7 +98,7 @@ class Usuario:
             )
         else:
             self.__id = id
-            
+
     def set_id(self) -> None:
         """
         Establece el ID del usuario
@@ -228,3 +229,13 @@ class Usuario:
                 "El monto a disminuir debe ser positivo y no puede ser mayor al saldo actual"
             )
         self.__saldo -= monto
+
+    def __repr__(self):
+        return (
+            f"id: {self.__id}\n"
+            f"nombre: {self.__nombre}\n"
+            f"apellido: {self.__apellido}\n"
+            f"saldo: {self.__saldo}\n"
+            f"total_apostado: {self.__total_apostado}\n"
+            f"historial: {self.__historial}\n"
+        )
