@@ -2,7 +2,7 @@ from src.model.salaDeJuego.SalaDeJuego import SalaDeJuego
 
 
 class KnuckleBones(SalaDeJuego):
-    __mesa_de_juego: list
+    _mesa_de_juego: list
     
     def __init__(self, id: str, capacidad: int, capacidadMinima: int):
         super().__init__(id, capacidad, capacidadMinima)

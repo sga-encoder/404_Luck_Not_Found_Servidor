@@ -11,20 +11,20 @@ class Usuario:
     Clase que representa un usuario del casino
 
     Attributes:
-        __id (str): Identificador único del usuario
-        __nombre (str): Nombre del usuario
-        __apellido (str): Apellido del usuario
-        __saldo (float): Saldo actual del usuario
-        __total_apostado (float): Total de dinero apostado por el usuario
-        __historial (list): Historial de transacciones del usuario
+        _id (str): Identificador único del usuario
+        _nombre (str): Nombre del usuario
+        _apellido (str): Apellido del usuario
+        _saldo (float): Saldo actual del usuario
+        _total_apostado (float): Total de dinero apostado por el usuario
+        _historial (list): Historial de transacciones del usuario
     """
 
-    __id: str
-    __nombre: str
-    __apellido: str
-    __saldo: float
-    __total_apostado: float
-    __historial: list
+    _id: str
+    _nombre: str
+    _apellido: str
+    _saldo: float
+    _total_apostado: float
+    _historial: list
 
     def __init__(
         self,
@@ -46,15 +46,15 @@ class Usuario:
             total_apostado (float, optional): Total apostado inicial. Por defecto 0.0
             historial (list, optional): Historial de transacciones. Por defecto []
         """
-        self.set_id(id) 
         self.set_nombre(nombre)
         self.set_apellido(apellido)
+        self.set_id(id) 
         self.set_saldo(saldo)
         self.set_total_apostado(total_apostado)
         self.__set_historial(historial)
         
     @classmethod
-    def simple_user(nombre: str, apellido: str, saldo: float = 0.0) -> None:
+    def crear_usuario(cls, nombre: str, apellido: str, saldo: float = 0.0) -> None:
         """
         Inicializa un nuevo usuario
 
@@ -63,12 +63,10 @@ class Usuario:
             apellido (str): Apellido del usuario
             saldo (float, optional): Saldo inicial. Por defecto 0.0
         """
-        self.set_id()
-        self.set_nombre(nombre)
-        self.set_apellido(apellido)
-        self.set_saldo(saldo)
-        self.set_total_apostado(0.0)
-        self.__set_historial([])
+        id = ""  # Generate or assign an ID as needed
+        total_apostado = 0.0
+        historial = []
+        return cls(id, nombre, apellido, saldo, total_apostado, historial)
         
     @classmethod
     def from_dict(cls, data: dict):
@@ -92,35 +90,35 @@ class Usuario:
 
     def get_id(self) -> str:
         """Retorna el ID del usuario"""
-        return self.__id
+        return self._id
 
     def get_nombre(self) -> str:
         """Retorna el nombre del usuario"""
-        return self.__nombre
+        return self._nombre
 
     def get_apellido(self) -> str:
         """Retorna el apellido del usuario"""
-        return self.__apellido
+        return self._apellido
 
     def get_saldo(self) -> float:
         """Retorna el saldo actual del usuario"""
-        return self.__saldo
+        return self._saldo
 
     def get_total_apostado(self) -> float:
         """Retorna el total apostado por el usuario"""
-        return self.__total_apostado
+        return self._total_apostado
 
     def get_historial(self) -> list:
         """Retorna el historial de transacciones del usuario"""
-        return self.__historial
+        return self._historial
 
-    def __generar_id(self) -> None:
+    def generar_id(self) -> str:
         """
         Genera un ID único para el usuario usando las iniciales y un número aleatorio
         """
         num_random = generador_random(100, 999)
-        self.__id = (
-            f"{self.__nombre[0].upper()}{self.__apellido[0].upper()}{num_random}"
+        return (
+            f"{self._nombre[0].upper()}{self._apellido[0].upper()}{num_random}"
         )
 
     def set_id(self, id: str) -> None:
@@ -133,29 +131,10 @@ class Usuario:
         Raises:
             ValueError: Si el ID es inválido
         """
-        if id == "" or id is None or len(id) < 3 or len(id) > 30:
-            raise ValueError(
-                "El ID no puede ser vacío o None y debe tener entre 3 y 30 caracteres"
-            )
+        if id == "":
+            self._id = self.generar_id()
         else:
-            self.__id = id
-
-    def set_id(self) -> None:
-        """
-        Establece el ID del usuario
-
-        Args:
-            id (str): Nuevo ID
-
-        Raises:
-            ValueError: Si el ID es inválido
-        """
-        if id == "" or id is None or len(id) < 3 or len(id) > 30:
-            raise ValueError(
-                "El ID no puede ser vacío o None y debe tener entre 3 y 30 caracteres"
-            )
-        else:
-            self.__id = self.__generar_id()
+            self._id = id   
 
     def set_nombre(self, nombre: str) -> None:
         """
@@ -167,8 +146,9 @@ class Usuario:
         Raises:
             ValueError: Si el nombre es inválido
         """
-        self.__nombre = nombre
-        if nombre == "" or nombre is None or len(nombre) < 3 or len(nombre) > 30:
+        if not nombre == "" and not (nombre is None) and (len(nombre) > 3) and (len(nombre) < 30):
+            self._nombre = nombre
+        else:
             raise ValueError(
                 "El nombre no puede ser vacío o None y debe tener entre 3 y 30 caracteres"
             )
@@ -183,13 +163,9 @@ class Usuario:
         Raises:
             ValueError: Si el apellido es inválido
         """
-        self.__apellido = apellido
-        if (
-            apellido == ""
-            or apellido is None
-            or len(apellido) < 3
-            or len(apellido) > 30
-        ):
+        if not ( apellido == "") and not (apellido is None) and (len(apellido) > 3) and (len(apellido) < 30):
+            self._apellido = apellido
+        else:
             raise ValueError(
                 "El apellido no puede ser vacío o None y debe tener entre 3 y 30 caracteres"
             )
@@ -204,9 +180,10 @@ class Usuario:
         Raises:
             ValueError: Si el saldo es negativo
         """
-        if saldo < 0:
+        if not saldo < 0:
+            self._saldo = saldo
+        else:
             raise ValueError("El saldo no puede ser negativo")
-        self.__saldo = saldo
 
     def set_total_apostado(self, total_apostado: float) -> None:
         """
@@ -218,9 +195,10 @@ class Usuario:
         Raises:
             ValueError: Si el total apostado es negativo
         """
-        if total_apostado < 0:
+        if not total_apostado < 0:
+            self._total_apostado = total_apostado
+        else:
             raise ValueError("El total apostado no puede ser negativo")
-        self.__total_apostado = total_apostado
 
     def __set_historial(self, historial: list) -> None:
         """
@@ -229,7 +207,7 @@ class Usuario:
         Args:
             historial (list): Nueva lista de historial
         """
-        self.__historial = historial
+        self._historial = historial
 
     def agregar_historial(self, registro: list) -> None:
         """
@@ -238,7 +216,7 @@ class Usuario:
         Args:
             registro (list): Registro a agregar
         """
-        self.__historial.append(registro)
+        self._historial.append(registro)
 
     def aumentar_saldo(self, monto: float) -> None:
         """
@@ -250,10 +228,11 @@ class Usuario:
         Raises:
             ValueError: Si el monto es negativo o cero
         """
-        if monto <= 0:
+        if monto > 0:
+            self._saldo += monto
+        else:
             raise ValueError("El monto a aumentar debe ser positivo")
 
-        self.__saldo += monto
 
     def disminuir_saldo(self, monto: float) -> None:
         """
@@ -265,11 +244,12 @@ class Usuario:
         Raises:
             ValueError: Si el monto es negativo, cero o mayor al saldo actual
         """
-        if monto <= 0 or monto > self.__saldo:
+        if monto > 0 or monto < self._saldo:
+            self._saldo -= monto
+        else:    
             raise ValueError(
                 "El monto a disminuir debe ser positivo y no puede ser mayor al saldo actual"
             )
-        self.__saldo -= monto
         
     def to_dict(self) -> dict:
         """
@@ -279,20 +259,20 @@ class Usuario:
             dict: Diccionario con los atributos del objeto Usuario
         """
         return {
-            "id": self.__id,
-            "nombre": self.__nombre,
-            "apellido": self.__apellido,
-            "saldo": self.__saldo,
-            "total_apostado": self.__total_apostado,
-            "historial": self.__historial
+            "id": self._id,
+            "nombre": self._nombre,
+            "apellido": self._apellido,
+            "saldo": self._saldo,
+            "total_apostado": self._total_apostado,
+            "historial": self._historial
         }
 
     def __repr__(self):
         return (
-            f"id: {self.__id}\n"
-            f"nombre: {self.__nombre}\n"
-            f"apellido: {self.__apellido}\n"
-            f"saldo: {self.__saldo}\n"
-            f"total_apostado: {self.__total_apostado}\n"
-            f"historial: {self.__historial}\n"
+            f"id: {self._id}\n"
+            f"nombre: {self._nombre}\n"
+            f"apellido: {self._apellido}\n"
+            f"saldo: {self._saldo}\n"
+            f"total_apostado: {self._total_apostado}\n"
+            f"historial: {self._historial}\n"
         )

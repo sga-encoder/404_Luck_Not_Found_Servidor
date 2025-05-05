@@ -3,7 +3,7 @@ from src.model.usuario.Usuario import Usuario
 
 
 class BlackJack(JuegoDeCartas):
-    __seguro: bool
+    _seguro: bool
     
     def __init__(self, id: str, capacidad: int, capacidadMinima: int, valor_entrada_mesa: int):
         super().__init__(id, capacidad, capacidadMinima, valor_entrada_mesa)

@@ -29,36 +29,108 @@ cred_dict = {
 cred = credentials.Certificate(cred_dict)
 firebase_admin.initialize_app(cred)
 
-# Obtener el cliente asíncrono de Firestore
 async def get_async_firestore_client():
+    """
+    Obtiene el cliente asíncrono de Firestore.
+
+    Returns:
+        firestore_async.client: Cliente asíncrono de Firestore.
+    """
     db = firestore_async.client()
     return db
 
 async def add_data(collection_name: str, data: dict) -> str:
+    """
+    Agrega un documento a una colección en Firestore.
+
+    Args:
+        collection_name (str): Nombre de la colección.
+        data (dict): Datos a agregar.
+
+    Returns:
+        str: ID del documento agregado.
+    """
     db = await get_async_firestore_client()
     doc_ref = db.collection(collection_name).document()
     await doc_ref.set(data)
     return doc_ref.id
 
-async def add_data(collection_name: str, data: dict, id: str) -> str:
+async def add_data_with_id(collection_name: str, data: dict, id: str) -> str:
+    """
+    Agrega un documento con un ID específico a una colección en Firestore.
+
+    Args:
+        collection_name (str): Nombre de la colección.
+        data (dict): Datos a agregar.
+        id (str): ID del documento.
+
+    Returns:
+        str: ID del documento agregado.
+    """
     db = await get_async_firestore_client()
     doc_ref = db.collection(collection_name).document(id)
     await doc_ref.set(data)
     return doc_ref.id
 
 async def get_data(collection_name: str, id: str) -> dict:
+    """
+    Obtiene un documento de una colección en Firestore.
+
+    Args:
+        collection_name (str): Nombre de la colección.
+        id (str): ID del documento.
+
+    Returns:
+        dict: Datos del documento.
+    """
     db = await get_async_firestore_client()
     doc_ref = db.collection(collection_name).document(id)
     doc = await doc_ref.get()
     return doc.to_dict()
 
+async def get_collection_data(collection_name: str) -> list[dict]:
+    """
+    Obtiene todos los documentos de una colección en Firestore.
+
+    Args:
+        collection_name (str): Nombre de la colección.
+
+    Returns:
+        list[dict]: Lista de documentos en la colección.
+    """
+    db = await get_async_firestore_client()
+    docs_ref = db.collection(collection_name).stream()
+    docs = [doc.to_dict() async for doc in docs_ref]
+    return docs	
+
 async def update_data(collection_name: str, id: str, data: dict) -> str:
+    """
+    Actualiza un documento en una colección en Firestore.
+
+    Args:
+        collection_name (str): Nombre de la colección.
+        id (str): ID del documento.
+        data (dict): Datos a actualizar.
+
+    Returns:
+        str: ID del documento actualizado.
+    """
     db = await get_async_firestore_client()
     doc_ref = db.collection(collection_name).document(id)
     await doc_ref.update(data)
     return doc_ref.id
 
 async def delete_data(collection_name: str, id: str) -> str:
+    """
+    Elimina un documento de una colección en Firestore.
+
+    Args:
+        collection_name (str): Nombre de la colección.
+        id (str): ID del documento.
+
+    Returns:
+        str: ID del documento eliminado.
+    """
     db = await get_async_firestore_client()
     doc_ref = db.collection(collection_name).document(id)
     await doc_ref.delete()

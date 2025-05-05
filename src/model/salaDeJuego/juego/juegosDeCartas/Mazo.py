@@ -2,8 +2,8 @@ from typing import override
 
 
 class Mazo:
-    __tamanoDeMazo: int
-    __mazo: list
+    _tamanoDeMazo: int
+    _mazo: list
     
     def __init__(self, tamanoDeMazo: int):
         self.__tamanoDeMazo = tamanoDeMazo

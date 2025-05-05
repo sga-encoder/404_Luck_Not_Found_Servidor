@@ -5,10 +5,10 @@ from src.model.salaDeJuego.juego.juegosDeCartas.JuegoDeCartas import JuegoDeCart
 
 
 class Poker(JuegoDeCartas):
-    __dealer: Usuario
-    __etapa: Etapas
-    __all_in: bool
-    __pozo: int
+    _dealer: Usuario
+    _etapa: Etapas
+    _all_in: bool
+    _pozo: int
     
     def __init__(self, id: str, capacidad: int, capacidadMinima: int, valor_entrada_mesa: int):
         super().__init__(id, capacidad, capacidadMinima, valor_entrada_mesa)
