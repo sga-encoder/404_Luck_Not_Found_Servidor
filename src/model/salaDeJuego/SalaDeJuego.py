@@ -49,6 +49,9 @@ class SalaDeJuego(ABC):
 
   def set_jugadores(self, jugadores: list):
     self._jugadores = jugadores
+    
+  def get_jugador_activo_index(self) -> int:
+    return self.get_jugadores().index(self.get_turnoActivo())
 
   def get_turnoActivo(self) -> Usuario:
     return self._turnoActivo

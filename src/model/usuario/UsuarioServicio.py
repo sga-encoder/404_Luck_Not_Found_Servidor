@@ -140,3 +140,14 @@ class UsuarioServicio:
         
         usuario_id = await update_data('usuarios', id, {'historial': array_union([historial])})
         print(f'historial actualizado del usuario: {usuario_id}')
+        
+async def main():
+    usuario_servicio = UsuarioServicio()
+    usuario = Usuario.crear_usuario("Miguel Angel", "Ospina Giraldo", 1000)
+    await usuario_servicio.actualizar_usuario("MO317", {"nombre" : "Miguel Jose"})
+
+    # Agregar un usuario
+    
+if __name__ == "__main__":
+    asyncio.run(main())
+    print('hola')
