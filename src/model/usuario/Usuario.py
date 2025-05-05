@@ -209,7 +209,9 @@ class Usuario:
         """
         self._historial = historial
 
-    def agregar_historial(self, registro: list) -> None:
+    async def agregar_historial(self, registro: dict) -> None:
+        from src.model.usuario.UsuarioServicio import UsuarioServicio
+        servicio = UsuarioServicio()
         """
         Agrega un nuevo registro al historial
 
@@ -217,8 +219,12 @@ class Usuario:
             registro (list): Registro a agregar
         """
         self._historial.append(registro)
+        await servicio.agregar_historial(self._id, registro)
 
-    def aumentar_saldo(self, monto: float) -> None:
+    async def aumentar_saldo(self, monto: float) -> None:
+        from src.model.usuario.UsuarioServicio import UsuarioServicio
+        servicio = UsuarioServicio()
+        
         """
         Aumenta el saldo del usuario
 
@@ -230,11 +236,14 @@ class Usuario:
         """
         if monto > 0:
             self._saldo += monto
+            await servicio.aumentar_saldo(self._id, monto)
         else:
             raise ValueError("El monto a aumentar debe ser positivo")
 
 
-    def disminuir_saldo(self, monto: float) -> None:
+    async def disminuir_saldo(self, monto: float) -> None:
+        from src.model.usuario.UsuarioServicio import UsuarioServicio
+        servicio = UsuarioServicio()
         """
         Disminuye el saldo del usuario
 
@@ -246,10 +255,29 @@ class Usuario:
         """
         if monto > 0 or monto < self._saldo:
             self._saldo -= monto
+            await servicio.disminuir_saldo(self._id, monto)
         else:    
             raise ValueError(
                 "El monto a disminuir debe ser positivo y no puede ser mayor al saldo actual"
             )
+            
+    async def incrementar_total_apostado(self, monto: float) -> None:
+        from src.model.usuario.UsuarioServicio import UsuarioServicio
+        servicio = UsuarioServicio()
+        """
+        Aumenta el total apostado del usuario
+
+        Args:
+            monto (float): Cantidad a aumentar
+
+        Raises:
+            ValueError: Si el monto es negativo o cero
+        """
+        if monto > 0:
+            self._total_apostado += monto
+            await servicio.incrementar_total_apostado(self._id, monto)
+        else:
+            raise ValueError("El monto a aumentar debe ser positivo")
         
     def to_dict(self) -> dict:
         """

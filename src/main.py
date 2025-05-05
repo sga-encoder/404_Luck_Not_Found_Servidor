@@ -10,17 +10,19 @@ import asyncio
 
 
 
-def main():
-    print(Usuario.crear_usuario("xxxx", "xxxx", 1000))
-    print(BlackJack("222222", 10, 5, 10))
-    print(Poker("222222", 10, 5, 10))
-    print(KnuckleBones("222222", 10, 5))
+async def main():
+    usuario = Usuario.crear_usuario("xxxx", "xxxx", 1000)
+    servicioUsuario = UsuarioServicio()
+    print(usuario)
+    await servicioUsuario.agregar_usuario(usuario)
+    await usuario.aumentar_saldo(1000)
+    # print(BlackJack("222222", 10, 5, 10))
+    # print(Poker("222222", 10, 5, 10))
+    # print(KnuckleBones("222222", 10, 5))
     # print(Mazo(52))
     
-async def test_usuario_servicio():
-    servicioUsuario = UsuarioServicio()
-    await servicioUsuario.agregar_usuario({"nombre": "xxxx", "apellido": "xxxx", "saldo": 1000})
+# async def test_usuario_servicio():
 
 if __name__ == "__main__":
-    main()
-    asyncio.run(test_usuario_servicio())
+    asyncio.run(main())
+    # asyncio.run(test_usuario_servicio())

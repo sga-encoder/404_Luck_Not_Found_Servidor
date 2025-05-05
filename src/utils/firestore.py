@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 import firebase_admin
-from firebase_admin import credentials, firestore_async
+from firebase_admin import credentials, firestore_async, firestore
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
@@ -135,3 +135,15 @@ async def delete_data(collection_name: str, id: str) -> str:
     doc_ref = db.collection(collection_name).document(id)
     await doc_ref.delete()
     return doc_ref.id
+
+def ingrement(num: int):
+    return firestore.Increment(num)
+
+def decrement(num: int):
+    return firestore.Increment(-num)
+
+def array_union(array: list):
+    return firestore.ArrayUnion(array)
+
+def array_remove(array: list):
+    return firestore.ArrayRemove(array)

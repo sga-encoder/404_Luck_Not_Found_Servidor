@@ -1,23 +1,22 @@
 import asyncio
 from src.model.usuario.Usuario import Usuario
-from src.utils.firestore import add_data_with_id, delete_data, get_data, update_data, get_collection_data
+from src.utils.firestore import add_data_with_id, delete_data, get_data, update_data, get_collection_data, ingrement, decrement, array_union
 
 class UsuarioServicio:
     """
     Servicio para gestionar operaciones CRUD sobre usuarios en Firestore.
     """
 
-    async def agregar_usuario(self, usuario_dict: dict) -> None:
+    async def agregar_usuario(self, usuario: Usuario) -> None:
         """
         Agrega un nuevo usuario a la colección 'usuarios' en Firestore.
 
         Args:
-            usuario_dict (dict): Diccionario con los datos del usuario a agregar.
+            usuario (Usuario): Instancia de Usuario con los datos del usuario a agregar.
 
         Raises:
             ValueError: Si el ID del usuario es vacío.
         """
-        usuario = self.datos_correctos(usuario_dict)
         usuario_id = usuario.get_id()
         
         if not usuario_id:
@@ -79,24 +78,65 @@ class UsuarioServicio:
         usuarios = [Usuario.from_dict(usuario_dict) for usuario_dict in usuarios_dict]
         return usuarios
     
-    def datos_correctos(self, usuario_dict: dict) -> Usuario:
+    async def aumentar_saldo(self, id: str, monto: float) -> None:
         """
-        Verifica y crea una instancia de Usuario a partir de un diccionario de datos.
+        Sube el saldo de un usuario en Firestore.
 
         Args:
-            usuario_dict (dict): Diccionario con los datos del usuario.
-
-        Returns:
-            Usuario: Instancia de Usuario creada.
+            id (str): ID del usuario.
+            monto (float): Monto a sumar al saldo del usuario.
 
         Raises:
-            ValueError: Si los datos del usuario son incorrectos.
+            ValueError: Monto debe ser mayor a 0.
         """
-        if "nombre" in usuario_dict and "apellido" in usuario_dict and "saldo" in usuario_dict:
-            nombre, apellido, saldo = str(usuario_dict["nombre"]), str(usuario_dict["apellido"]), float(usuario_dict["saldo"])
-            usuario = Usuario.crear_usuario(nombre, apellido, saldo)
-            return usuario
+        if monto > 0:
+            usuario_id = await update_data('usuarios', id, {'saldo': ingrement(monto)})
+            print(f'Saldo actualizado con ID: {usuario_id}')
         else:
-            return ValueError("Los datos del usuario son incorrectos")
+            raise ValueError("Monto debe ser mayor a 0")
+        
+    async def disminuir_saldo(self, id: str, monto: float) -> None:
+        """
+        Baja el saldo de un usuario en Firestore.
 
+        Args:
+            id (str): ID del usuario.
+            monto (float): Monto a restar al saldo del usuario.
 
+        Raises:
+            ValueError: Monto debe ser mayor a 0.
+        """
+        if monto > 0:
+            usuario_id = await update_data('usuarios', id, {'saldo': decrement(monto)})
+            print(f'Saldo actualizado con ID: {usuario_id}')
+        else:
+            raise ValueError("Monto debe ser mayor a 0")
+        
+    async def incrementar_total_apostado(self, id: str, monto: float) -> None:
+        """
+        Incrementa el total apostado de un usuario en Firestore.
+
+        Args:
+            id (str): ID del usuario.
+            monto (float): Monto a incrementar en el total apostado del usuario.
+
+        Raises:
+            ValueError: Monto debe ser mayor a 0.
+        """
+        if monto > 0:
+            usuario_id = await update_data('usuarios', id, {'total_apostado': ingrement(monto)})
+            print(f'Total apostado actualizado con ID: {usuario_id}')
+        else:
+            raise ValueError("Monto debe ser mayor a 0")
+        
+    async def agregar_historial(self, id: str, historial: dict) -> None:
+        """
+        Agrega un historial de apuestas a un usuario en Firestore.
+
+        Args:
+            id (str): ID del usuario.
+            historial (dict): Diccionario de historiales de apuestas a agregar.
+        """
+        
+        usuario_id = await update_data('usuarios', id, {'historial': array_union([historial])})
+        print(f'historial actualizado del usuario: {usuario_id}')
