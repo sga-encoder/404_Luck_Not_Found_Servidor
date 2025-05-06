@@ -5,7 +5,7 @@ import random
 
 class BlackJack(JuegoDeCartas):
     _plantarse: bool = False
-    _cartas: int = {"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"10":10,
+    _cartas: dict[str,int] = {"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"10":10,
             "J":10,"Q":10,"K":10,"A":11}
     _apuesta: int = 1
     
@@ -21,22 +21,18 @@ class BlackJack(JuegoDeCartas):
         print("falta implementar pedir()")
         pass
     
-    def plantarse(self, mano_jugador):
-
-        plantarse = (input("¿Quieres pedir otra carta? (Si/No): "))
-        plantarse = self.plantarse(plantarse)
-    
-        if plantarse.charAt(0) == "S" or plantarse.charAt(0) == "s":
+    def plantarse(self, mano_jugador,plantarse: str):
+        
+        if plantarse[0] == "S" or plantarse[0] == "s":
             return print("El jugador se plantó.")
-        elif plantarse.charAt(0) == "N" or plantarse.charAt(0) == "n":            
+        elif plantarse[0] == "N" or plantarse[0] == "n":            
             mano_jugador.append(self.repartir_cartas())
     
-    def calcular_puntos(self, mano_jugador, mano_crupier) -> int:
+    def calcular_puntos(self, mano) -> int:
 
         #Calcula los puntos de la mano del jugador y del crupier.
-        puntos_jugador = sum([BlackJack._cartas[carta] for carta in mano_jugador])
-        puntos_crupier = sum([BlackJack._cartas[carta] for carta in mano_crupier])
-        return puntos_jugador, puntos_crupier
+        puntos = sum([BlackJack._cartas[carta] for carta in mano])
+        return puntos
     
     def doblar(self, jugador: Usuario):
         print("falta implementar doblear()")
@@ -50,9 +46,9 @@ class BlackJack(JuegoDeCartas):
         print("falta implementar retirarse()")
         pass
     
-    def repartir_cartas(self):
+    def repartir_cartas(self): 
         #Reparte una carta al jugador o al crupier y devuelve el valor de la carta.
-        return random.choice(list(BlackJack._cartas.keys()))
+        random.choice(list(BlackJack._cartas.keys()))
 
     def cartasIniciales(self):
         #Reparte dos cartas al jugador y devuelve el valor de las cartas.
@@ -65,7 +61,9 @@ class BlackJack(JuegoDeCartas):
         print(f"Mano del jugador: {mano_jugador}")
         print(f"Mano del crupier: {mano_crupier}")
         #Muestra los puntos de el jugador y de crupier.
-        puntos_jugador, puntos_crupier = self.calcular_puntos(mano_jugador, mano_crupier)
+        puntos_crupier = self.calcular_puntos(mano_crupier)
+        puntos_jugador = self.calcular_puntos(mano_jugador)
+
         print(f"Puntos del jugador: {puntos_jugador}")
         print(f"Puntos del crupier: {puntos_crupier}")
 
@@ -82,7 +80,7 @@ class BlackJack(JuegoDeCartas):
             # Muestra las cartas y los puntos 
             self.mostrar_CartasYPuntos(mano_jugador, mano_crupier)
             # Pregunta al jugador si quiere pedir otra carta o plantarse
-            self.plantarse(mano_jugador)
+            self.plantarse(mano_jugador, "si")
             # Muestra las cartas y los puntos 
 
 
