@@ -1,4 +1,4 @@
-from src.model.salaDeJuego.juego.juegosDeCartas import JuegoDeCartas
+from src.model.salaDeJuego.juego.juegosDeCartas.JuegoDeCartas import JuegoDeCartas
 from src.model.usuario.Usuario import Usuario
 import random
 
