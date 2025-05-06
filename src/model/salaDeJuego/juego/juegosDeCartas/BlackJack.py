@@ -90,8 +90,9 @@ class BlackJack(JuegoDeCartas):
     def __repr__(self):
         return (
             f"{super().__repr__()}"
-            f"seguro: {self.__seguro}\n"
+            f"cartas: {self._cartas}\n"
         )
     
 if __name__ == "__main__":
     inicializar_juego = BlackJack("222222", 10, 5, 10, True, 1)
+    print(inicializar_juego)
