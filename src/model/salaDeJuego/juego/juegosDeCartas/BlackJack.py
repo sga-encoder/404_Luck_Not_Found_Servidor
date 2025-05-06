@@ -21,13 +21,22 @@ class BlackJack(JuegoDeCartas):
         print("falta implementar pedir()")
         pass
     
-    def plantarse(self, plantarse: str) -> bool: 
+    def plantarse(self, mano_jugador):
+
+        plantarse = (input("¿Quieres pedir otra carta? (Si/No): "))
+        plantarse = self.plantarse(plantarse)
+    
         if plantarse.charAt(0) == "S" or plantarse.charAt(0) == "s":
-            self._plantarse = True
-            return self._plantarse
+            return print("El jugador se plantó.")
         elif plantarse.charAt(0) == "N" or plantarse.charAt(0) == "n":            
-            self._plantarse = False
-            return self._plantarse
+            mano_jugador.append(self.repartir_cartas())
+    
+    def calcular_puntos(self, mano_jugador, mano_crupier) -> int:
+
+        #Calcula los puntos de la mano del jugador y del crupier.
+        puntos_jugador = sum([BlackJack._cartas[carta] for carta in mano_jugador])
+        puntos_crupier = sum([BlackJack._cartas[carta] for carta in mano_crupier])
+        return puntos_jugador, puntos_crupier
     
     def doblar(self, jugador: Usuario):
         print("falta implementar doblear()")
@@ -37,23 +46,28 @@ class BlackJack(JuegoDeCartas):
         print("falta implementar separar()")
         pass
     
-    def seguro(self, jugador: Usuario, monto: float):
-        print("falta implementar seguro()")
-        pass
-    
     def retirarse(self, jugador: Usuario):
         print("falta implementar retirarse()")
         pass
     
     def repartir_cartas(self):
-        """Reparte una carta al jugador o al crupier y devuelve el valor de la carta."""
+        #Reparte una carta al jugador o al crupier y devuelve el valor de la carta.
         return random.choice(list(BlackJack._cartas.keys()))
 
     def cartasIniciales(self):
-        """Reparte dos cartas al jugador y devuelve el valor de las cartas."""
+        #Reparte dos cartas al jugador y devuelve el valor de las cartas.
         mano_jugador = [self.repartir_cartas(), self.repartir_cartas()]
         mano_crupier = [self.repartir_cartas(), self.repartir_cartas()]
         return mano_jugador, mano_crupier
+
+    def mostrar_CartasYPuntos(self, mano_jugador, mano_crupier):
+        #Muestra las cartas de la mano.
+        print(f"Mano del jugador: {mano_jugador}")
+        print(f"Mano del crupier: {mano_crupier}")
+        #Muestra los puntos de el jugador y de crupier.
+        puntos_jugador, puntos_crupier = self.calcular_puntos(mano_jugador, mano_crupier)
+        print(f"Puntos del jugador: {puntos_jugador}")
+        print(f"Puntos del crupier: {puntos_crupier}")
 
     def apostar(self, jugador: Usuario, monto: float):
         print("falta implementar apostar()")
@@ -61,18 +75,17 @@ class BlackJack(JuegoDeCartas):
     
     def inicializar_juego(self):
         """Inicializa el juego de BlackJack."""
+        # Reparte las cartas iniciales al jugador y al crupier
         mano_jugador, mano_crupier = self.cartasIniciales()
 
-        print(f"Mano del jugador: {mano_jugador}")
-        print(f"Mano del crupier: {mano_crupier}")
-        plantarse = (input("¿Quieres seguro? (Si/No): "))
-        plantarse = self.plantarse(plantarse)
+        while self.calcular_puntos(mano_jugador) < 21:
+            # Muestra las cartas y los puntos 
+            self.mostrar_CartasYPuntos(mano_jugador, mano_crupier)
+            # Pregunta al jugador si quiere pedir otra carta o plantarse
+            self.plantarse(mano_jugador)
+            # Muestra las cartas y los puntos 
 
-        if plantarse:
-            mano_jugador.append(self.repartir_carta())
-        else:
-            print("El jugador se planta.")
-        
+
     
     def __repr__(self):
         return (
