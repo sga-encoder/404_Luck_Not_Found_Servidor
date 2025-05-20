@@ -3,6 +3,8 @@ from src.model.usuario.Usuario import Usuario
 from src.model.salaDeJuego.enums import Juegos
 from datetime import datetime
 from abc import ABC, abstractmethod
+import json
+import os
 
 class SalaDeJuego(ABC):
   _id: str
@@ -84,28 +86,63 @@ class SalaDeJuego(ABC):
     self._apuestas = apuestas
     
   def iniciar_juego(self, juego: Juegos):
-    print("falta implementar iniciar_juego()")
-    pass
-  
+    """
+    Inicializa un juego en la sala de juegos.
+    Verifica si hay suficientes jugadores para comenzar.
+    """
+    if len(self._jugadores) < self._capacidadMinima:
+        print("No hay suficientes jugadores para iniciar el juego.")
+        return
+
+    print(f"Iniciando el juego: {juego.name}")
+    self._historial.append(f"Juego iniciado: {juego.name} a las {datetime.now()}")
+    self._turnoActivo = self._jugadores[0]  # El primer jugador toma el turno inicial
+
   def entrar_sala_de_juego(self, usuario: Usuario):
-    print("falta implementar entrar_sala_de_juego()")
-    pass
-  
-  def __entrar_sala_de_juego(self, usuario: Usuario, index: int):
-    print("falta implementar __entrar_sala_de_juego()")
-    pass
+    """
+    Permite que un usuario entre a la sala de juego.
+    Si la sala está llena, el usuario será agregado a la lista de espera.
+    """
+    if len(self._jugadores) < 7:
+        self._jugadores.append(usuario)
+        print(f"{usuario} ha entrado a la sala de juego.")
+    else:
+        self.__listaDeEspera.append(usuario)
+        print(f"{usuario} ha sido agregado a la lista de espera.")
 
   def salir_sala_de_juego(self, usuario: Usuario):
-    print("falta implementar salir_sala_de_juego()")
-    pass
+    """
+    Permite que un usuario salga de la sala de juego.
+    Si hay usuarios en la lista de espera, el primero en la lista ocupará su lugar.
+    """
+    if usuario in self._jugadores:
+        self._jugadores.remove(usuario)
+        print(f"{usuario} ha salido de la sala de juego.")
+
+        # Verificar si hay alguien en la lista de espera
+        if self.__listaDeEspera:
+            siguiente_usuario = self.__listaDeEspera.pop(0)
+            self._jugadores.append(siguiente_usuario)
+            print(f"{siguiente_usuario} ha entrado a la sala de juego desde la lista de espera.")
+    else:
+        print(f"{usuario} no está en la sala de juego.")
   
   def pagar_apuesta(self, usuario: Usuario, monto: float):
-    print("falta implementar pagar_apuesta()")
-    pass
+    """
+    Registra y procesa el pago de una apuesta por parte de un jugador.
+    """
+    if usuario not in self._jugadores:
+        print(f"{usuario} no está en la sala de juego y no puede realizar apuestas.")
+        return
+
+    self._apuestas.append({"usuario": usuario, "monto": monto})
+    print(f"{usuario} ha realizado una apuesta de {monto}.")
   
   def get_jugadores_activos(self) -> list:
-    print("falta implementar get_jugadores_activos()")
-    pass
+    """
+    Devuelve una lista de jugadores actualmente activos en la sala.
+    """
+    return [jugador for jugador in self._jugadores if jugador is not None]
   
   @abstractmethod
   def inicializar_juego(self):
@@ -129,3 +166,50 @@ class SalaDeJuego(ABC):
       f"listaDeEspera: {self.__listaDeEspera}\n"
       f"apuestas: {self._apuestas}\n"
     )
+
+  def guardar_registro_sala(self, estado: str):
+    """
+    Guarda un registro de la sala de juegos en un archivo JSON.
+    El estado puede ser "creada" o "finalizada".
+    """
+    registro = {
+        "id": self._id,
+        "tipo_juego": self.__class__.__name__,
+        "capacidad": self._capacidad,
+        "capacidad_minima": self._capacidadMinima,
+        "jugadores": [str(jugador) for jugador in self._jugadores],
+        "historial": self._historial,
+        "estado": estado,
+        "fecha_hora": str(datetime.now())
+    }
+
+    ruta = os.path.join("registros", f"sala_{self._id}.json")
+    os.makedirs("registros", exist_ok=True)
+
+    with open(ruta, "w") as archivo:
+        json.dump(registro, archivo, indent=4)
+
+  def guardar_registro_jugador(self, usuario: Usuario, monto: float):
+    """
+    Guarda un registro individual para cada jugador en un archivo JSON.
+    """
+    ruta = os.path.join("registros", f"jugador_{usuario.get_id()}.json")
+    os.makedirs("registros", exist_ok=True)
+
+    if os.path.exists(ruta):
+        with open(ruta, "r") as archivo:
+            registros = json.load(archivo)
+    else:
+        registros = []
+
+    registro = {
+        "mesa": self._id,
+        "tipo_juego": self.__class__.__name__,
+        "monto": monto,
+        "fecha_hora": str(datetime.now())
+    }
+
+    registros.append(registro)
+
+    with open(ruta, "w") as archivo:
+        json.dump(registros, archivo, indent=4)
