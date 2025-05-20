@@ -33,7 +33,7 @@ class JuegoDeCartas(SalaDeJuego, ABC):
         self._mano_de_casino = mano_de_casino
     
     @abstractmethod
-    def  repartir_cartas(self):
+    def  repartir_cartas(self)-> str:
         """
         Método abstracto para repartir cartas.
         Cada juego de cartas debe implementar su propia lógica.
