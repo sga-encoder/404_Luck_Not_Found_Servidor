@@ -1,6 +1,6 @@
-from src.model.salaDeJuego.enums.Etapas import Etapas
-from src.model.usuario.Usuario import Usuario
-from src.model.salaDeJuego.juego.juegosDeCartas.JuegoDeCartas import JuegoDeCartas
+from model.salaDeJuego.enums.Etapas import Etapas
+from model.usuario.Usuario import Usuario
+from model.salaDeJuego.juego.juegosDeCartas.JuegoDeCartas import JuegoDeCartas
 
 
 

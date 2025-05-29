@@ -1,33 +1,41 @@
-from src.model.salaDeJuego.juego.KnuckleBones import KnuckleBones
-from src.model.salaDeJuego.juego.juegosDeCartas.BlackJack import BlackJack
-from src.model.salaDeJuego.juego.juegosDeCartas.Mazo import Mazo
-from src.model.salaDeJuego.juego.juegosDeCartas.Poker import Poker
-from src.model.usuario.Usuario import Usuario
-from src.model.usuario.UsuarioServicio import UsuarioServicio
+import os
+import sys
+
+# Imprime la ruta actual para depuración
+
+# Añadir el directorio raíz del proyecto al path de Python
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+# Imprimir sys.path para ver dónde está buscando Python
+# print(f"Python está buscando en estas rutas: {sys.path}")
+
+try:
+    from src.model.salaDeJuego.juego.KnuckleBones import KnuckleBones
+    from src.model.salaDeJuego.juego.juegosDeCartas.BlackJack import BlackJack
+    from src.model.salaDeJuego.juego.juegosDeCartas.Mazo import Mazo
+    from src.model.salaDeJuego.juego.juegosDeCartas.Poker import Poker
+    from src.model.usuario.Usuario import Usuario
+    from src.model.usuario.UsuarioServicio import UsuarioServicio
+except ImportError as e:
+    print(f"Error importando módulos: {e}")
+    sys.exit(1)
+
 from asyncio import run
 import asyncio
 
-
-
-
-# async def main():
-    # usuario = Usuario.crear_usuario("xxxx", "xxxx", 1000)
-    # servicioUsuario = UsuarioServicio()
-    # print(usuario)
-    # await servicioUsuario.agregar_usuario(usuario)
-    # await usuario.aumentar_saldo(1000)
-    # print(BlackJack("222222", 10, 5, 10))
-    # print(Poker("222222", 10, 5, 10))
-    # print(KnuckleBones("222222", 10, 5))
-    # print(Mazo(52))
-    
-# async def test_usuario_servicio():
 def main():
-    print("Iniciando el programa...")
-    self = BlackJack("222222", 10, 5, 10, False, 1)
-    BlackJack.inicializar_juego(self)
+    usuario1 = Usuario.crear_usuario("Sebastian", "Garzon", 1000)
+    usuario2 = Usuario.crear_usuario("Juan", "Perez", 1000)
+    
+    mesa = [[3, 3, 3], [2, 1, 0], [3, 1, 3]]
+    
+    knuckle = KnuckleBones("11")
+    knuckle.set_jugadores([usuario1, usuario2])
+    # knuckle.knuckle_bot(6, knuckle.get_mesa_de_juego())
+    # print(knuckle.sumar_puntos(mesa))
+    knuckle.inicializar_juego('KnuckleBones')
+    # print(knuckle.columna_paralela([6, 3, 0], 3))
+    
     
 if __name__ == "__main__":
     main()
-    # asyncio.run(main())
-    # asyncio.run(test_usuario_servicio())

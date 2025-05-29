@@ -1,6 +1,6 @@
 import asyncio
-from src.model.usuario.Usuario import Usuario
-from src.utils.firestore import add_data_with_id, delete_data, get_data, update_data, get_collection_data, ingrement, decrement, array_union
+from model.usuario.Usuario import Usuario
+from utils.firestore import add_data_with_id, delete_data, get_data, update_data, get_collection_data, ingrement, decrement, array_union
 
 class UsuarioServicio:
     """

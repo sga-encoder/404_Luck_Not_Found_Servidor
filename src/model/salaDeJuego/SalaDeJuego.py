@@ -47,8 +47,11 @@ class SalaDeJuego(ABC):
   def get_jugadores(self) -> list:
     return self._jugadores
 
-  def set_jugadores(self, jugadores: list):
+  def set_jugadores(self, jugadores):
     self._jugadores = jugadores
+    # Inicializar el turno activo al primer jugador
+    if jugadores and len(jugadores) > 0:
+        self.set_turnoActivo(jugadores[0])
     
   def get_jugador_activo_index(self) -> int:
     return self.get_jugadores().index(self.get_turnoActivo())

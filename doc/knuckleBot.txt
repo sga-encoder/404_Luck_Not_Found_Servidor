@@ -1,0 +1,175 @@
+Definir cantidad_de_dados_puestos Como Lista
+
+cantidad_de_dados_puestos <- [0, 0]
+
+Funcion poner_dado(mesa_del_jugador, posicion, valor, esta_jugando = True) Con Retorno : Lista
+    posicion hace referencia a las columnas como tal de la mesa
+    valor hace referencia al valor del dado
+    pone el dado en la primer posicion vacia de la columna indicada
+    y si esta_jugando es verdadero, suma uno en cantidad_de_dados_puestos
+    en la posicion del indice del jugador correspondiente
+FinFuncion
+
+Funcion eliminar_dado(mesa_del_jugador, posicion, dado) Con Retorno : Lista
+    elimina todos los dados del mismo valor del dado en la columna indicada
+    y si esta_jugando es verdadero, resta uno en cantidad_de_dados_puestos
+    en la posicion del indice del jugador correspondiente
+FinFuncion
+
+Funcion sumar_puntos(mesa_del_jugador) Con Retorno : Entero
+    suma el contenido de cada columna de manera individual
+    esta suma se realiza de la siguiente manera:
+    1. suma todos los numeros iguales y se multiplica 
+    por la cantidad  de veces que se repite el numero
+    2. despues se suma los numeros individual de manera normal
+    y por ultimo se suma los resultados de cada columna
+FinFuncion
+Funcion columna_optima(columna) Con Retorno : Entero
+    devuelve el puntaje de la columna en base a la cantidad de dados
+    que tiene el jugador en esa columna
+    Definir contador Como Entero
+    contador <- 0
+    
+    Para i <- 0 Hasta 2 Con Paso 1 Hacer
+        Si columna[i] = 0 Entonces
+            contador <- contador + 1
+        FinSi
+    FinPara
+    
+    Si contador = 3 Entonces
+        Retornar 2
+    Sino Si contador = 2 Entonces
+        Retornar 1
+    Sino Si contador = 1 Entonces
+        Retornar 0
+    Sino
+        Retornar -2
+    FinSi
+
+FinFuncion
+
+Funcion columna_paralela(columna_del_jugador_opuesto, columna_del_jugador_activo, puntuacion_columna, dado) Con Retorno : Entero
+    Definir contador Como Entero
+    contador <- 0
+
+    Para i <- 0 Hasta 2 Con Paso 1 Hacer
+        // Verificamos si hay valores en la columna del oponente mayores que nuestro dado
+        Si columna_del_jugador_opuesto[i] > dado Y columna_del_jugador_opuesto[i] <> 0 Entonces
+            contador <- contador - 1
+        FinSi
+        
+        // Si la columna del jugador activo tiene 1 o 2 espacios libres (puntuación 1 o 0)
+        Si puntuacion_columna = 1 O puntuacion_columna = 0 Entonces
+            // Verificamos si hay valores en nuestra columna menores que nuestro dado
+            Si columna_del_jugador_activo[i] < dado Y columna_del_jugador_activo[i] <> 0 Entonces
+                contador <- contador - 1
+            FinSi
+        FinSi
+    FinPara
+
+    Retornar contador
+FinFuncion
+    
+
+Funcion proyector_de_jugadas_del_jugador(mesa_del_jugador, indice_jugador) Con Retorno : Lista
+    devuelve una lista con las jugadas posibles del jugador
+    en base a los dados que tiene en la mesa
+    por cada posicion del arreglo es una jugada posible el primer numero es el
+    valor del dado y el segundo es la posicion de la columna
+    este retorno es un ejemplo:
+    Retornar [[1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
+FinFuncion
+
+Funcion proyetor_de_jugada(mesa_de_juego, jugada_proyectada, posicion, dado) Con Retorno : Lista
+    Definir bot como Lista
+    Definir jugador como Lista
+    Definir puntos_proyectados_bot Como Entero
+    Definir puntos_proyectados_jugador Como Entero
+
+    bot = poner_dado(mesa_de_juego[get_jugador_activo_index()], posicion, dado, False)
+    jugador = eliminar_dado(mesa_de_juego[get_oponente_index()], posicion, dado, False)
+    jugador = poner_dado(mesa_de_juego[get_oponente_index()], posicion, dado, False)
+    bot = eliminar_dado(mesa_de_juego[get_jugador_activo_index()], posicion, dado, False)
+    
+    puntos_proyectados_bot = sumar_puntos(jugador)
+    puntos_proyectados_jugador = sumar_puntos(bot)
+
+    Retornar {
+        "puntos_proyectados_bot": puntos_proyectados_bot,
+        "puntos_proyectados_jugador": puntos_proyectados_jugador
+    }
+FinFuncion
+
+Funcion Kunckle_bot(dado, mesaJuego) Con Retorno : Diccionario
+    Definir historial Como Diccionario
+    Definir proyeccion_jugador Como Lista
+    Definir posicion Como Entero
+    historial = {
+        "puntaje": [0, 0, 0],
+        "puntos_bot": sumar_puntos(mesaJuego[get_jugador_activo_index()]),
+        "puntos_oponente": sumar_puntos(mesaJuego[get_oponente_index()]),
+    }
+    proyeccion_jugador = proyector_de_jugadas_del_jugador(mesaJuego, get_oponente_index())
+    posicion = kunckle_bot_think(0, proyeccion_jugador, mesaJuego, historial, dado)
+    poner_dado(mesaJuego[get_jugador_activo_index()], dado)
+    Retornar historial
+FinFuncion
+
+Funcion kunckle_bot_think(posicion, proyeccion_jugador, mesaJuego, historial, dado) Con Retorno : Entero
+    Definir puntaje Como Lista
+    Definir puntaje_bot Como Entero
+    Definir puntaje_oponente Como Entero
+    Definir maximo Como Double
+
+    puntaje = historial["puntaje"]
+    puntaje_bot = historial["puntos_bot"]
+    puntaje_oponente = historial["puntos_oponente"]
+
+    si posicion == 3 Entonces
+        maximo = valor_maximo_de_una_lista(puntaje)
+        Retornar puntaje.devolver_indice_encontrado(maximo)
+    sino
+        puntaje[posicion] = 0
+
+        Para Cada jugada_proyectada En proyeccion_jugador Hacer
+            Definir proyeccion Como Lista
+            Definir puntos_proyectados_bot Como Entero
+            Definir puntos_proyectados_jugador Como Entero
+            proyeccion = proyeccion_de_jugada(mesaJuego, jugada_proyectada, posicion, dado)
+            si proyeccion == {} Entonces
+                continuar
+            FinSi
+            puntos_proyectados_bot = proyeccion["puntos_proyectados_bot"]
+            puntos_proyectados_jugador = proyeccion["puntos_proyectados_jugador"]
+            si puntos_bot < puntos_oponente Entonces
+                si puntos_proyectados_bot > puntaje_bot
+                    puntaje[posicion] += puntos_proyectados_bot * 9 / 1 si puntos_proyectados_jugador == 0 sino puntos_proyectados_jugador
+                sino si puntos_proyectados_bot == puntos_proyectados_jugador Entonces
+                    puntaje[posicion] += 5
+                sino
+                    puntaje[posicion] -= puntos_proyectados_bot * 9 / 1 si puntos_proyectados_jugador == 0 sino puntos_proyectados_jugador
+                FinSi
+            sino si puntaje_bot > puntos_oponente Entonces
+                puntaje[posicion] += 10
+            sino
+                puntaje[posicion] += 0
+            FinSi
+        FinPara
+
+        puntuacion_columna = columna_optima(mesaJuego[get_jugador_activo_index()][posicion])
+        puntaje[posicion] += puntuacion_columna
+
+        columna_del_jugador_oponente = mesaJuego[get_oponente_index()][posicion]
+        columna_del_jugador_bot = mesaJuego[get_jugador_activo_index()][posicion]
+        puntaje[posicion] += columna_paralela(columna_del_jugador_oponente, columna_del_jugador_bot, puntuacion_columna, dado)
+
+        Retornar kunckle_bot_think(posicion + 1, proyeccion_jugador, mesaJuego, historial, dado)
+	
+FinFuncion
+
+Funcion juego(self) con Retorno : String
+    Definir index_activo Como Entero
+    Definir index_oponente Como Entero
+    Si (finalizo_Juego()) Entonces
+        instrucciones
+    FinSi

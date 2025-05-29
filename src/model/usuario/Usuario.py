@@ -3,7 +3,7 @@ Módulo que define la clase Usuario del Casino
 """
 
 
-from src.utils.Util import generador_random
+from utils.Util import generador_random
 
 
 class Usuario:
