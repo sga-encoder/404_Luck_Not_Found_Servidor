@@ -11,8 +11,8 @@ class BlackJack(JuegoDeCartas):
     
     
     
-    def __init__(self, id: str, capacidad: int, capacidadMinima: int, valor_entrada_mesa: int ,_plantarse: bool, _apuesta: int):
-        super().__init__(id, capacidad, capacidadMinima, valor_entrada_mesa)
+    def __init__(self, jugador: str, capacidad: int, capacidadMinima: int, valor_entrada_mesa: int ,_plantarse: bool, _apuesta: int):
+        super().__init__(jugador, capacidad, capacidadMinima, valor_entrada_mesa)
         self._apuesta = _apuesta
         self._plantarse = _plantarse
     
@@ -81,37 +81,39 @@ class BlackJack(JuegoDeCartas):
         pass
     
     def inicializar_juego(self):
-        """Inicializa el juego de BlackJack."""
-        # Reparte las cartas iniciales al jugador y al crupier
-        mano_jugador = self.cartasIniciales()
+        """Inicializa el juego de BlackJack para 7 jugadores más el crupier."""
+        # Crear 7 jugadores
+        jugadores = [Usuario.crear_usuario(f"Jugador{i+1}", f"Apellido{i+1}", 1000) for i in range(7)]
+        manos_jugadores = [self.cartasIniciales() for _ in range(7)]
         mano_crupier = self.cartasIniciales()
-        puntos =0
+        plantados = [False] * 7
 
-        while  puntos < 21 :
-            puntos=self.calcular_puntos(mano_jugador)
-            # Muestra las cartas y los puntos 
-            self.mostrar_CartasYPuntos(mano_jugador, mano_crupier)
-            # Pregunta al jugador si quiere pedir otra carta o plantarse
-            plantarse = str(input("¿Quieres plantarte? (S/N): ").lower())
-            # Si el jugador quiere pedir otra carta, se le reparte una nueva carta
-            if plantarse == "n":
-                mano_jugador.append(self.repartir_cartas())
-            elif plantarse == "s":
-                self._plantarse = True
-                break
-        # Si el jugador se planta, es hora de jugar al crupier
-        puntos=self.calcular_puntos(mano_crupier)
-        if puntos < 17:
-            # El crupier pide cartas hasta que tenga al menos 17 puntos
-            while puntos < 17:
-                mano_crupier.append(self.repartir_cartas())
-                puntos = self.calcular_puntos(mano_crupier)
-            #Si el crupier tiene mas de 17 puntos muestra las cartas y los puntos del crupier
-            if puntos >  17:
-                print(f"Mano del crupier: {mano_crupier}  || Puntos: {puntos}")
-        # Determina el ganador
-        self.ganador(mano_jugador, mano_crupier)    
+        while not all(plantados):
+            for i, (mano, plantado) in enumerate(zip(manos_jugadores, plantados)):
+                if not plantado:
+                    print(f"\nTurno de {jugadores[i]._nombre}:")
+                    self.mostrar_CartasYPuntos(mano, mano_crupier)
+                    puntos = self.calcular_puntos(mano)
+                    if puntos >= 21:
+                        plantados[i] = True
+                        continue
+                    plantarse = str(input(f"{jugadores[i]._nombre}, ¿Quieres plantarte? (S/N): ").lower())
+                    if plantarse == "n":
+                        mano.append(self.repartir_cartas())
+                    elif plantarse == "s":
+                        plantados[i] = True
 
+        # Turno del crupier
+        puntos_crupier = self.calcular_puntos(mano_crupier)
+        while puntos_crupier < 17:
+            mano_crupier.append(self.repartir_cartas())
+            puntos_crupier = self.calcular_puntos(mano_crupier)
+        print(f"\nMano final del crupier: {mano_crupier}  || Puntos: {puntos_crupier}")
+
+        # Determinar ganadores
+        for i, mano in enumerate(manos_jugadores):
+            print(f"\nResultado para {jugadores[i]._nombre}:")
+            self.ganador(mano, mano_crupier)
 
     
     def __repr__(self):
@@ -122,4 +124,4 @@ class BlackJack(JuegoDeCartas):
     
 if __name__ == "__main__":
     inicializar_juego = BlackJack("222222", 10, 5, 10, True, 1)
-    print(inicializar_juego)
+    inicializar_juego.inicializar_juego()

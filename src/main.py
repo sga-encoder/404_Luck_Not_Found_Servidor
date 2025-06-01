@@ -29,13 +29,17 @@ def main():
     
     mesa = [[3, 3, 3], [2, 1, 0], [3, 1, 3]]
     
-    knuckle = KnuckleBones("11")
+    blackjack=BlackJack("Miguel",7,2,100,False,10)
+    blackjack.inicializar_juego()
+
+"""knuckle = KnuckleBones("11")
     knuckle.set_jugadores([usuario1, usuario2])
     # knuckle.knuckle_bot(6, knuckle.get_mesa_de_juego())
     # print(knuckle.sumar_puntos(mesa))
     knuckle.inicializar_juego('KnuckleBones')
-    # print(knuckle.columna_paralela([6, 3, 0], 3))
+    # print(knuckle.columna_paralela([6, 3, 0], 3))"""
     
+
     
 if __name__ == "__main__":
     main()
