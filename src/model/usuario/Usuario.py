@@ -54,7 +54,7 @@ class Usuario:
         self.__set_historial(historial)
         
     @classmethod
-    def crear_usuario(cls, nombre: str, apellido: str, saldo: float = 0.0) -> None:
+    def crear_usuario(cls, nombre: str, apellido: str, saldo: float = 0.0):
         """
         Inicializa un nuevo usuario
 
