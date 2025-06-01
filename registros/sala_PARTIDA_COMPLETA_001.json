@@ -1,0 +1,13 @@
+{
+    "id": "PARTIDA_COMPLETA_001",
+    "tipo_juego": "KnuckleBones",
+    "capacidad": 2,
+    "capacidad_minima": 2,
+    "jugadores": [
+        "id: AJ525\nnombre: Alice\napellido: Johnson\nsaldo: 5000.0\ntotal_apostado: 0.0\nhistorial: []\n",
+        "id: RS684\nnombre: Roberto\napellido: Smith\nsaldo: 3000.0\ntotal_apostado: 0.0\nhistorial: []\n"
+    ],
+    "historial": [],
+    "estado": "creada",
+    "fecha_hora": "2025-06-01 13:11:42.191710"
+}

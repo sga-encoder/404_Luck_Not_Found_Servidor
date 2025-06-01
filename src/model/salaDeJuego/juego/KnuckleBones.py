@@ -1,5 +1,5 @@
 import copy
-from src.model.salaDeJuego.SalaDeJuego import SalaDeJuego
+from model.salaDeJuego.SalaDeJuego import SalaDeJuego
 from utils.Util import generador_random
 
 
@@ -278,19 +278,26 @@ class KnuckleBones(SalaDeJuego):
             f" ╠═════╪═════╪═════╣     ║  {self.__get_position(0,False)+1}  │  {self.__get_position(1,False)+1}  │  {self.__get_position(2,False)+1}  ║\n"
             f" ║  {self._mesa_de_juego[0][0][0]}  │  {self._mesa_de_juego[0][1][0]}  │  {self._mesa_de_juego[0][2][0]}  ║     ║     │     │     ║\n"
             f" ╟─────┼─────┼─────╢     ║     │     │     ║\n"
-            f" ║  {self._mesa_de_juego[0][0][1]}  │  {self._mesa_de_juego[0][1][1]}  │  {self._mesa_de_juego[0][2][1]}  ║     ╚═════╧═════╧═════╝\n"
-            f" ╟─────┼─────┼─────╢       Jugador Activo:\n"
+            f" ║  {self._mesa_de_juego[0][0][1]}  │  {self._mesa_de_juego[0][1][1]}  │  {self._mesa_de_juego[0][2][1]}  ║     ╚═════╧═════╧═════╝\n"            f" ╟─────┼─────┼─────╢       Jugador Activo:\n"
             f" ║  {self._mesa_de_juego[0][0][2]}  │  {self._mesa_de_juego[0][1][2]}  │  {self._mesa_de_juego[0][2][2]}  ║           {self._turnoActivo.get_id()}\n"
             f" ╚═════╧═════╧═════╝\n"
             f"        {self._jugadores[0].get_id()}\n")
-            
         print(string)
 
     def inicializar_juego(self, juego):
         """
         Implementación del método abstracto de SalaDeJuego
         """
+        # Primero verificar que hay suficientes jugadores y establecer turno activo
+        if len(self._jugadores) < self._capacidadMinima:
+            print("No hay suficientes jugadores para iniciar el juego.")
+            return False
+            
+        # Establecer el turno activo al primer jugador
+        self._turnoActivo = self._jugadores[0]
+        
         if juego == 'KnuckleBones':
+            print(f"🎲 Iniciando KnuckleBones entre {self._jugadores[0].get_nombre()} y {self._jugadores[1].get_nombre()}")
             print(self.juego())
             print(self._historial)
         else:

@@ -1,6 +1,6 @@
 from typing import override
-from src.model.usuario.Usuario import Usuario
-from src.model.salaDeJuego.enums import Juegos
+from model.usuario.Usuario import Usuario
+from model.salaDeJuego.enums import Juegos
 from datetime import datetime
 from abc import ABC, abstractmethod
 import json
@@ -100,7 +100,6 @@ class SalaDeJuego(ABC):
     print(f"Iniciando el juego: {juego.name}")
     self._historial.append(f"Juego iniciado: {juego.name} a las {datetime.now()}")
     self._turnoActivo = self._jugadores[0]  # El primer jugador toma el turno inicial
-
   def entrar_sala_de_juego(self, usuario: Usuario):
     """
     Permite que un usuario entre a la sala de juego.
@@ -109,6 +108,9 @@ class SalaDeJuego(ABC):
     if len(self._jugadores) < 7:
         self._jugadores.append(usuario)
         print(f"{usuario} ha entrado a la sala de juego.")
+        # Establecer el turno activo si es el primer jugador
+        if len(self._jugadores) == 1:
+            self._turnoActivo = usuario
     else:
         self.__listaDeEspera.append(usuario)
         print(f"{usuario} ha sido agregado a la lista de espera.")

@@ -17,6 +17,19 @@ def knucklebones(screen):
     # Inicializa color para cada celda
     color1 = [Screen.COLOUR_DEFAULT] * 9
     color2 = [Screen.COLOUR_DEFAULT] * 9
+    print_card_data = {
+        'width': 55,
+        'height': 27,
+        'text': '',
+        'ascii_y': '│',
+        'ascii_x': '─',
+        'grid_divider_x': 3,
+        'grid_divider_y': 3,
+        'corner': ['╭', '╮', '╰', '╯'],
+        'grid': True,
+        'grid_click': 'row',
+        'color': Screen.COLOUR_MAGENTA,
+    }
 
     while True:
         vs = print_text(screen, {'text': 'V.S', 'x-center': 0, 'y-center': 0, 'font': "big_money-ne"}, True)
@@ -47,19 +60,6 @@ def knucklebones(screen):
             knucklebones.last_mouse_event = event
         event_mouse = knucklebones.last_mouse_event
         contador += 1
-        print_card_data = {
-            'width': 55,
-            'height': 27,
-            'text': '',
-            'ascii_y': '│',
-            'ascii_x': '─',
-            'grid_divider_x': 3,
-            'grid_divider_y': 3,
-            'corner': ['╭', '╮', '╰', '╯'],
-            'grid': True,
-            'grid_click': 'column',
-            'color': Screen.COLOUR_MAGENTA,
-        }
         
         print_card_data_1 = copy.deepcopy(print_card_data)
         print_card_data_1['x-center'] = -40
