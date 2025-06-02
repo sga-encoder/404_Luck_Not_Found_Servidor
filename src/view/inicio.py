@@ -5,7 +5,8 @@ import pyfiglet
 
 from src.view.screens.home import home
 from src.view.screens.juegos.poker import poker
-from src.view.screens.juegos.blackjack import blackjack
+from src.view.screens.juegos.blackjack.blackjack_inicio import blackjack_inicio
+from src.view.screens.juegos.blackjack.blackjack_juego import blackjack_juego
 from src.view.screens.juegos.knucklebones.knucklebones import knucklebones
 from src.view.utils.events import add_key_listener
 from src.view.utils.helpers import create_card, font_tester, font_tester_recomded
@@ -23,7 +24,7 @@ def inicio(screen):
         'max-width': 130,
     }
     boton_text = {
-        'text': '[  INICIAR JUEGO  ]',
+        'text': '[  ENTRAR AL CASINO  ]',
         'x-center': 0,
         'y-center': 5,
         'color': Screen.COLOUR_WHITE,
@@ -52,20 +53,24 @@ def main(screen):
         if card == 'poker':
             poker(screen)
         elif card == 'blackjack':
-            blackjack(screen)
+            resultado= blackjack_inicio(screen)
+            if resultado == 'iniciar blackjack':
+                blackjack_juego(screen)
         elif card == 'knucklebones':
             knucklebones(screen)
 
+    
+
 def main_dev(screen):
-    knucklebones(screen)
+    blackjack_juego(screen)
 
 
 
 if __name__ == "__main__":
-    # font_tester('v.s')
-    # font_tester_recomded('404-LUCK-NOT FOUND')
-    Screen.wrapper(main)
-    # Screen.wrapper(main_dev)
+    #font_tester('TUS CARTAS')
+    #font_tester_recomded('TUS CARTAS')
+    #Screen.wrapper(main)
+    Screen.wrapper(main_dev)
     # print(create_card({
     #     'width': 55,
     #     'height': 27,
