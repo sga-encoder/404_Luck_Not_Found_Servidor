@@ -1,6 +1,6 @@
 import random
 
-# Diccionario de palos con sus símbolos y abreviaciones para nombres de variables
+# Diccionario de palos con sus símbolos y abreviaciones para nombres de variables, no afectaran a la puntuacion
 palos = {
     'corazones': ('♥', 'Corazones'),
     'diamantes': ('♦', 'Diamantes'),
@@ -17,7 +17,7 @@ mazo = []
 # Generar las 52 cartas
 for palo, (simbolo, nombre_palo) in palos.items():
     for valor in valores:
-        nombre_variable = f"carta_{valor}{nombre_palo}"
+        nombre_variable = valor
         valor_izq = valor.ljust(2) if len(valor) == 1 else valor
         valor_der = valor.rjust(2) if len(valor) == 1 else valor
         carta = (
