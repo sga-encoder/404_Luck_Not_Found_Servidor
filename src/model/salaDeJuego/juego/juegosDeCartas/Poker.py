@@ -216,8 +216,10 @@ class Poker(JuegoDeCartas):
             self.set_etapa(Etapas.RIVER)
             self._historial.append("RIVER: " + str(self.cartas_comunitarias))
         elif self.__etapa == Etapas.RIVER:
+            # Al llegar a RIVER, automáticamente pasar a SHOWDOWN y determinar el ganador
             self.set_etapa(Etapas.SHOWDOWN)
             self._historial.append("SHOWDOWN")
+            self.showdown()
         else:
             print("La partida ya está en SHOWDOWN o finalizada.")
 
@@ -233,6 +235,7 @@ class Poker(JuegoDeCartas):
             self._historial.append(f"{ganador._nombre} ganó el pozo de {self.__pozo} por abandono de los demás.")
             print(f"{ganador._nombre} gana el pozo de {self.__pozo} por abandono de los demás.")
             self.__pozo = 0
+            # Preguntar si quieren continuar después de determinar el ganador por abandono
             self.preguntar_continuar_jugadores()
             return
         if not activos:
@@ -242,6 +245,7 @@ class Poker(JuegoDeCartas):
         def mejor_carta(mano, comunidad):
             valores = {'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10,'J':11,'Q':12,'K':13,'A':14}
             return max([valores.get(str(c)[:-1], 0) for c in mano + comunidad])
+        
         mejor = -1
         ganador = None
         for jugador_info in activos:
@@ -249,6 +253,7 @@ class Poker(JuegoDeCartas):
             if valor > mejor:
                 mejor = valor
                 ganador = jugador_info['jugador']
+                
         if ganador:
             ganador._saldo += self.__pozo
             self._historial.append(f"{ganador._nombre} ganó el pozo de {self.__pozo} en el showdown.")
@@ -256,7 +261,8 @@ class Poker(JuegoDeCartas):
             self.__pozo = 0
         else:
             print("Empate o no se pudo determinar el ganador.")
-        # Preguntar a cada jugador si quiere seguir y reiniciar si quedan al menos 2
+            
+        # Preguntar si quieren continuar después de determinar el ganador
         self.preguntar_continuar_jugadores()
 
     def preguntar_continuar_jugadores(self):
@@ -319,3 +325,96 @@ class Poker(JuegoDeCartas):
                 f"etapa: {self.__etapa}\n"
                 f"all_in: {self.__all_in}\n"
                 f"pozo: {self.__pozo}\n")
+    
+    def jugar_partida(self):
+        print("\n¡Bienvenido a Poker Texas Hold'em!")
+        jugadores = self._jugadores
+        turno = 0
+        acciones_realizadas = set()
+        from model.salaDeJuego.enums.Etapas import Etapas
+        def limpiar():
+            import os, sys
+            os.system('cls' if sys.platform == 'win32' else 'clear')
+        def mostrar_estado(jugador, poker):
+            print(f"\nTu saldo: {jugador._saldo}")
+            mano = []
+            for j in poker._mano_de_jugadores:
+                if j['jugador'] == jugador:
+                    mano = j.get('mano', [])
+                    if mano is None:
+                        mano = []
+                    break
+            print(f"Tus cartas: {mano if mano else 'No repartidas'}")
+            print(f"Cartas comunitarias: {getattr(poker, 'cartas_comunitarias', [])}")
+            print(f"Pozo actual: {poker.get_pozo()}")
+            print(f"Etapa: {poker.get_etapa()}")
+            print()
+        def pedir_monto(jugador):
+            try:
+                monto = float(input("Monto a apostar/subir: "))
+                if monto <= 0 or monto > jugador._saldo:
+                    raise ValueError
+                return monto
+            except Exception:
+                print("Monto inválido.")
+                return pedir_monto(jugador)
+        while self.get_etapa() != Etapas.SHOWDOWN:
+            jugador = jugadores[turno % len(jugadores)]
+            if not any(j['jugador'] == jugador and j['en_juego'] for j in self._mano_de_jugadores):
+                turno += 1
+                continue
+            limpiar()
+            print(f"Turno de {jugador._nombre}")
+            mostrar_estado(jugador, self)
+            max_apuesta = max(j['apuesta'] for j in self._mano_de_jugadores if j['en_juego'])
+            jugador_info = next(j for j in self._mano_de_jugadores if j['jugador'] == jugador)
+            if jugador_info['apuesta'] < max_apuesta:
+                acciones = ['igualar', 'subir', 'retirarse', 'all-in']
+            else:
+                acciones = ['apostar', 'subir', 'pasar', 'retirarse', 'all-in']
+            print("Acciones disponibles:")
+            for i, acc in enumerate(acciones):
+                print(f"  {i+1}. {acc}")
+            eleccion = input("Elige acción (número): ")
+            try:
+                idx = int(eleccion) - 1
+                if idx < 0 or idx >= len(acciones):
+                    raise ValueError
+                accion = acciones[idx]
+            except Exception:
+                print("Opción inválida.")
+                continue
+            if accion == 'apostar':
+                monto = pedir_monto(jugador)
+                self.apostar(jugador, monto)
+            elif accion == 'igualar':
+                self.igualar(jugador)
+            elif accion == 'subir':
+                monto = pedir_monto(jugador)
+                self.subir(jugador, monto)
+            elif accion == 'all-in':
+                self.all_in(jugador)
+            elif accion == 'pasar':
+                self.pasar(jugador)
+            elif accion == 'retirarse':
+                self.retirarse(jugador)
+            acciones_realizadas.add(jugador)
+            activos = [j for j in self._mano_de_jugadores if j['en_juego']]
+            if len(activos) == 1:
+                self.avanzar_etapa()
+                acciones_realizadas.clear()
+            elif len(acciones_realizadas) == len([j for j in jugadores if any(m['jugador'] == j and m['en_juego'] for m in self._mano_de_jugadores)]):
+                if all(j['apuesta'] == max(j2['apuesta'] for j2 in activos) for j in activos):
+                    self.avanzar_etapa()
+                    for j in activos:
+                        j['apuesta'] = 0
+                    acciones_realizadas.clear()
+            turno += 1
+        limpiar()
+        print("\n--- SHOWDOWN ---")
+        for jugador in jugadores:
+            mostrar_estado(jugador, self)
+        self.showdown()
+        print("\nHistorial:")
+        for h in self._historial:
+            print(h)
