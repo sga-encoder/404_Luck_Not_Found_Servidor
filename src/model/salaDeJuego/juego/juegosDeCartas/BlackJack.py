@@ -83,7 +83,7 @@ class BlackJack(JuegoDeCartas):
     def inicializar_juego(self):
         """Inicializa el juego de BlackJack para 7 jugadores más el crupier."""
         # Crear 7 jugadores
-        jugadores = [Usuario.crear_usuario(f"Jugador{i+1}", f"Apellido{i+1}", 1000) for i in range(7)]
+        jugadores = [Usuario.crear_usuario(f"Jugador {i+1}", f"Apellido {i+1}", 1000) for i in range(7)]
         manos_jugadores = [self.cartasIniciales() for _ in range(7)]
         mano_crupier = self.cartasIniciales()
         plantados = [False] * 7
