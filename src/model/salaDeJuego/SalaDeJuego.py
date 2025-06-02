@@ -17,8 +17,8 @@ class SalaDeJuego(ABC):
   __listaDeEspera: list
   _apuestas: list
   
-  def __init__(self, id: str, capacidad: int, capacidadMinima: int):
-    self._id = id
+  def __init__(self, capacidad: int, capacidadMinima: int):
+    # self._id = id
     self._capacidad = capacidad
     self._capacidadMinima = capacidadMinima
     self._jugadores = []
@@ -88,31 +88,44 @@ class SalaDeJuego(ABC):
   def set_apuestas(self, apuestas: list):
     self._apuestas = apuestas
     
-  def iniciar_juego(self, juego: Juegos):
-    """
-    Inicializa un juego en la sala de juegos.
-    Verifica si hay suficientes jugadores para comenzar.
-    """
-    if len(self._jugadores) < self._capacidadMinima:
-        print("No hay suficientes jugadores para iniciar el juego.")
-        return
+  def crear_sala_de_juego(self, diccionario: dict):
+    import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
+    servicio = SalaDeJuegoServicio()
+    self._id = servicio.crear_sala_de_juego(diccionario)
 
-    print(f"Iniciando el juego: {juego.name}")
-    self._historial.append(f"Juego iniciado: {juego.name} a las {datetime.now()}")
-    self._turnoActivo = self._jugadores[0]  # El primer jugador toma el turno inicial
+  # def iniciar_juego(self, juego: Juegos):
+  #   """
+  #   Inicializa un juego en la sala de juegos.
+  #   Verifica si hay suficientes jugadores para comenzar.
+  #   """
+  #   if len(self._jugadores) < self._capacidadMinima:
+  #       print("No hay suficientes jugadores para iniciar el juego.")
+  #       return
+
+  #   print(f"Iniciando el juego: {juego.name}")
+  #   self._historial.append(f"Juego iniciado: {juego.name} a las {datetime.now()}")
+  #   self._turnoActivo = self._jugadores[0]  # El primer jugador toma el turno inicial
+  
   def entrar_sala_de_juego(self, usuario: Usuario):
     """
     Permite que un usuario entre a la sala de juego.
     Si la sala está llena, el usuario será agregado a la lista de espera.
     """
-    if len(self._jugadores) < 7:
+    import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
+    servicio = SalaDeJuegoServicio()
+    if len(self._jugadores) < self._capacidad:
         self._jugadores.append(usuario)
+        servicio.entrar_sala_de_juego(self._id, usuario)
         print(f"{usuario} ha entrado a la sala de juego.")
         # Establecer el turno activo si es el primer jugador
-        if len(self._jugadores) == 1:
-            self._turnoActivo = usuario
+        # if len(self._jugadores) == 0:
+        #     self._turnoActivo = usuario
     else:
+      if len(self.__listaDeEspera) > self._capacidadMinima:  # Limitar la lista de espera a 10 usuarios
+          print("creando...una nueva sala de juego")
+      else:
         self.__listaDeEspera.append(usuario)
+        servicio.agregar_jugador_a_lista_de_espera(self._id, usuario)
         print(f"{usuario} ha sido agregado a la lista de espera.")
 
   def salir_sala_de_juego(self, usuario: Usuario):
@@ -120,14 +133,20 @@ class SalaDeJuego(ABC):
     Permite que un usuario salga de la sala de juego.
     Si hay usuarios en la lista de espera, el primero en la lista ocupará su lugar.
     """
+    import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
+    servicio = SalaDeJuegoServicio()
     if usuario in self._jugadores:
         self._jugadores.remove(usuario)
+        servicio.salir_sala_de_juego(self._id, usuario)
+        self.guardar_registro_jugador(usuario, 0)  # Guardar registro de salida con monto 0
+        
         print(f"{usuario} ha salido de la sala de juego.")
 
         # Verificar si hay alguien en la lista de espera
         if self.__listaDeEspera:
             siguiente_usuario = self.__listaDeEspera.pop(0)
-            self._jugadores.append(siguiente_usuario)
+            servicio.eliminar_jugador_de_lista_de_espera(self._id, siguiente_usuario)
+            self.entrar_sala_de_juego(siguiente_usuario)
             print(f"{siguiente_usuario} ha entrado a la sala de juego desde la lista de espera.")
     else:
         print(f"{usuario} no está en la sala de juego.")
@@ -177,6 +196,9 @@ class SalaDeJuego(ABC):
     Guarda un registro de la sala de juegos en un archivo JSON.
     El estado puede ser "creada" o "finalizada".
     """
+    import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
+    servicio = SalaDeJuegoServicio()
+    # import json
     registro = {
         "id": self._id,
         "tipo_juego": self.__class__.__name__,
@@ -187,34 +209,57 @@ class SalaDeJuego(ABC):
         "estado": estado,
         "fecha_hora": str(datetime.now())
     }
+    
+    servicio.guardar_registro_sala_de_juego(self._id, registro)
+    
 
-    ruta = os.path.join("registros", f"sala_{self._id}.json")
-    os.makedirs("registros", exist_ok=True)
+    # ruta = os.path.join("registros", f"sala_{self._id}.json")
+    # os.makedirs("registros", exist_ok=True)
 
-    with open(ruta, "w") as archivo:
-        json.dump(registro, archivo, indent=4)
+    # with open(ruta, "w") as archivo:
+    #     json.dump(registro, archivo, indent=4)
 
   def guardar_registro_jugador(self, usuario: Usuario, monto: float):
     """
     Guarda un registro individual para cada jugador en un archivo JSON.
     """
-    ruta = os.path.join("registros", f"jugador_{usuario.get_id()}.json")
-    os.makedirs("registros", exist_ok=True)
+    # ruta = os.path.join("registros", f"jugador_{usuario.get_id()}.json")
+    # os.makedirs("registros", exist_ok=True)
 
-    if os.path.exists(ruta):
-        with open(ruta, "r") as archivo:
-            registros = json.load(archivo)
-    else:
-        registros = []
-
+    # if os.path.exists(ruta):
+    #     with open(ruta, "r") as archivo:
+    #         registros = json.load(archivo)
+    # else:
+    #     registros = []
+  
+    
     registro = {
         "mesa": self._id,
         "tipo_juego": self.__class__.__name__,
-        "monto": monto,
+        # "monto": monto,
         "fecha_hora": str(datetime.now())
     }
+    usuario.agregar_historial(registro)
 
-    registros.append(registro)
+    # registros.append(registro)
 
-    with open(ruta, "w") as archivo:
-        json.dump(registros, archivo, indent=4)
+    # with open(ruta, "w") as archivo:
+    #     json.dump(registros, archivo, indent=4)
+        
+  def to_dict(self) -> dict:
+        """
+        Convierte el objeto Usuario en un diccionario
+
+        Returns:
+            dict: Diccionario con los atributos del objeto Usuario
+        """
+        return {
+            "id": self._id,
+            "tipo_juego": self.__class__.__name__,
+            "capacidad": self._capacidad,
+            "capacidad_minima": self._capacidadMinima,
+            "jugadores": [str(jugador) for jugador in self._jugadores],
+            "historial": self._historial,
+            "estado": True if self._jugadores else False,
+            "fecha_hora": str(datetime.now())
+        }
