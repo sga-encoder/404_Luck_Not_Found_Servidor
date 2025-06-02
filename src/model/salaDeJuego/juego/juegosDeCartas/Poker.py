@@ -38,6 +38,7 @@ class Poker(JuegoDeCartas):
     def get_pozo(self):
         return self.__pozo
 
+
     def set_pozo(self, pozo: int):
         self.__pozo = pozo
     
