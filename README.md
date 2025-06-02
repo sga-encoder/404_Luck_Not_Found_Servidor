@@ -79,6 +79,11 @@ luego, instalamos las dependencias usando potry
 poetry install
 ```
 
+### Instalar dependencias de desarrollo externas del poetry
+    ```powershell
+    $ pip install asciimatics
+```
+
 ### Correr el Proyecto
 
 Para ejecutar el proyecto, utiliza el siguiente comando:
@@ -86,3 +91,7 @@ Para ejecutar el proyecto, utiliza el siguiente comando:
 ```powershell
 poetry run python main.py
 ```
+
+### Correr el proyecto
+Ejecutar el proyecto por los ambientes de pythom
+python -m src.main
