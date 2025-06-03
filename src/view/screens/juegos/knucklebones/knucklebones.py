@@ -7,9 +7,10 @@ import pyfiglet
 from asciimatics.event import MouseEvent
 
 
-
+last_mouse_event = None
 
 def knucklebones(screen):
+    global last_mouse_event
     screen.mouse = True
     screen.clear()
     font = pyfiglet.FigletFont.getFonts()
@@ -54,14 +55,13 @@ def knucklebones(screen):
         screen.refresh()
         event = screen.get_event()
         # Guardar el último MouseEvent válido
-        if not hasattr(knucklebones, 'last_mouse_event'):
-            knucklebones.last_mouse_event = None
+        
         if isinstance(event, MouseEvent):
-            knucklebones.last_mouse_event = event
-        event_mouse = knucklebones.last_mouse_event
+            last_mouse_event = event
+        event_mouse = last_mouse_event
         contador += 1
         
-        print_card_data_1 = copy.deepcopy(print_card_data)
+        print_card_data_1 = copy.deepcopy(print_card_data)  
         print_card_data_1['x-center'] = -40
         print_card_data_1['y-center'] = 0
         print_card_data_1['click'] = {

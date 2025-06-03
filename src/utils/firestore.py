@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials, firestore_async, firestore
+from google.cloud.firestore_v1 import Increment, ArrayUnion, ArrayRemove
+from typing import List, Dict, Any, Optional
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
@@ -72,7 +74,7 @@ async def add_data_with_id(collection_name: str, data: dict, id: str) -> str:
     await doc_ref.set(data)
     return doc_ref.id
 
-async def get_data(collection_name: str, id: str) -> dict:
+async def get_data(collection_name: str, id: str) -> Optional[Dict[str, Any]]:
     """
     Obtiene un documento de una colección en Firestore.
 
@@ -88,7 +90,7 @@ async def get_data(collection_name: str, id: str) -> dict:
     doc = await doc_ref.get()
     return doc.to_dict()
 
-async def get_collection_data(collection_name: str) -> list[dict]:
+async def get_collection_data(collection_name: str) -> List[Optional[Dict[str, Any]]]:
     """
     Obtiene todos los documentos de una colección en Firestore.
 
@@ -136,14 +138,14 @@ async def delete_data(collection_name: str, id: str) -> str:
     await doc_ref.delete()
     return doc_ref.id
 
-def ingrement(num: int):
-    return firestore.Increment(num)
+def increment(num: float):
+    return Increment(num)
 
-def decrement(num: int):
-    return firestore.Increment(-num)
+def decrement(num: float):
+    return Increment(-num)
 
 def array_union(array: list):
-    return firestore.ArrayUnion(array)
+    return ArrayUnion(array)
 
 def array_remove(array: list):
-    return firestore.ArrayRemove(array)
+    return ArrayRemove(array)

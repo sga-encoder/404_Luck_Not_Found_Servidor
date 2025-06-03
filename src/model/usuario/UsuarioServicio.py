@@ -1,6 +1,6 @@
 import asyncio
 from model.usuario.Usuario import Usuario
-from utils.firestore import add_data_with_id, delete_data, get_data, update_data, get_collection_data, ingrement, decrement, array_union
+from utils.firestore import add_data_with_id, delete_data, get_data, update_data, get_collection_data, increment, decrement, array_union
 
 class UsuarioServicio:
     """
@@ -63,6 +63,8 @@ class UsuarioServicio:
             Usuario: Instancia de Usuario con los datos obtenidos.
         """
         usuario_dict = await get_data('usuarios', id)
+        if usuario_dict is None:
+            raise ValueError(f"No se encontró usuario con ID: {id}")
         usuario = Usuario.from_dict(usuario_dict)
         return usuario
 
@@ -75,7 +77,7 @@ class UsuarioServicio:
             list[Usuario]: Lista de instancias de Usuario.
         """
         usuarios_dict = await get_collection_data('usuarios')
-        usuarios = [Usuario.from_dict(usuario_dict) for usuario_dict in usuarios_dict]
+        usuarios = [Usuario.from_dict(usuario_dict) for usuario_dict in usuarios_dict if usuario_dict is not None]
         return usuarios
     
     async def aumentar_saldo(self, id: str, monto: float) -> None:
@@ -90,7 +92,7 @@ class UsuarioServicio:
             ValueError: Monto debe ser mayor a 0.
         """
         if monto > 0:
-            usuario_id = await update_data('usuarios', id, {'saldo': ingrement(monto)})
+            usuario_id = await update_data('usuarios', id, {'saldo': increment(monto)})
             print(f'Saldo actualizado con ID: {usuario_id}')
         else:
             raise ValueError("Monto debe ser mayor a 0")
@@ -124,7 +126,7 @@ class UsuarioServicio:
             ValueError: Monto debe ser mayor a 0.
         """
         if monto > 0:
-            usuario_id = await update_data('usuarios', id, {'total_apostado': ingrement(monto)})
+            usuario_id = await update_data('usuarios', id, {'total_apostado': increment(monto)})
             print(f'Total apostado actualizado con ID: {usuario_id}')
         else:
             raise ValueError("Monto debe ser mayor a 0")
