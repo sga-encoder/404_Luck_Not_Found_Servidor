@@ -1,6 +1,6 @@
 import copy
-from model.salaDeJuego.SalaDeJuego import SalaDeJuego
-from utils.Util import generador_random
+from servidor.src.model.salaDeJuego.SalaDeJuego import SalaDeJuego
+from servidor.src.utils.Util import generador_random
 
 
 class KnuckleBones(SalaDeJuego):

@@ -18,9 +18,9 @@ sys.modules['google.auth.crypt._cryptography_rsa'] = type('fake', (), {})()
 sys.modules['google.auth._helpers'] = type('fake', (), {'to_bytes': lambda x: x})()
 # --- Fin monkeypatch ---
 
-from src.model.usuario.Usuario import Usuario
-from src.model.salaDeJuego.juego.juegosDeCartas.Poker import Poker
-from src.model.salaDeJuego.enums.Etapas import Etapas
+from ....usuario.Usuario import Usuario
+from servidor.src.model.salaDeJuego.juego.juegosDeCartas.Poker import Poker
+from servidor.src.model.salaDeJuego.enums.Etapas import Etapas
 
 # --- Utilidades CLI ---
 def limpiar():

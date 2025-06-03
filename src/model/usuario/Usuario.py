@@ -3,7 +3,7 @@ Módulo que define la clase Usuario del Casino
 """
 
 
-from utils.Util import generador_random
+from ...utils.Util import generador_random
 
 
 class Usuario:
@@ -210,7 +210,7 @@ class Usuario:
         self._historial = historial
 
     async def agregar_historial(self, registro: dict) -> None:
-        from src.model.usuario.UsuarioServicio import UsuarioServicio
+        from .UsuarioServicio import UsuarioServicio
         servicio = UsuarioServicio()
         """
         Agrega un nuevo registro al historial
@@ -222,7 +222,7 @@ class Usuario:
         await servicio.agregar_historial(self._id, registro)
 
     async def aumentar_saldo(self, monto: float) -> None:
-        from src.model.usuario.UsuarioServicio import UsuarioServicio
+        from .UsuarioServicio import UsuarioServicio
         servicio = UsuarioServicio()
         
         """
@@ -242,7 +242,7 @@ class Usuario:
 
 
     async def disminuir_saldo(self, monto: float) -> None:
-        from src.model.usuario.UsuarioServicio import UsuarioServicio
+        from .UsuarioServicio import UsuarioServicio
         servicio = UsuarioServicio()
         """
         Disminuye el saldo del usuario
@@ -262,7 +262,7 @@ class Usuario:
             )
             
     async def incrementar_total_apostado(self, monto: float) -> None:
-        from src.model.usuario.UsuarioServicio import UsuarioServicio
+        from .UsuarioServicio import UsuarioServicio
         servicio = UsuarioServicio()
         """
         Aumenta el total apostado del usuario

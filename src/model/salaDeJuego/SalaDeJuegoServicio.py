@@ -1,7 +1,7 @@
 import asyncio
-from src.model.salaDeJuego.SalaDeJuego import SalaDeJuego
-from src.model.usuario import Usuario
-from src.utils.firestore import add_data, add_data_with_id, array_remove, array_union, delete_data, get_data, update_data, get_collection_data
+from .SalaDeJuego import SalaDeJuego
+from ..usuario import Usuario
+from ...utils.firestore import add_data, add_data_with_id, array_remove, array_union, delete_data, get_data, update_data, get_collection_data
 
 class SalaDeJuegoServicio:
     """

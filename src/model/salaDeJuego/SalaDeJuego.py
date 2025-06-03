@@ -1,6 +1,6 @@
 from typing import override
-from model.usuario.Usuario import Usuario
-from model.salaDeJuego.enums import Juegos
+from servidor.src.model.usuario.Usuario import Usuario
+from servidor.src.model.salaDeJuego.enums import Juegos
 from datetime import datetime
 from abc import ABC, abstractmethod
 import json

@@ -10,9 +10,9 @@ import os
 # Configurar el path para importar los módulos
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
 
-from src.model.salaDeJuego.juego.KnuckleBones import KnuckleBones
-from src.model.usuario.Usuario import Usuario
-from src.model.salaDeJuego.enums.Juegos import Juegos
+from servidor.src.model.salaDeJuego.juego.KnuckleBones import KnuckleBones
+from ....usuario.Usuario import Usuario
+from servidor.src.model.salaDeJuego.enums.Juegos import Juegos
 
 
 def crear_usuarios_de_prueba():

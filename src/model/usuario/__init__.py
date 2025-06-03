@@ -1,7 +1,9 @@
-__version__ = "0.1.0"
-__author__ = "sga-encoder"
+# Módulo de usuario del Casino Virtual
 
 from .Usuario import Usuario
 from .UsuarioServicio import UsuarioServicio
 
-__all__ = ["Usuario", "UsuarioServicio"]
+__all__ = [
+    'Usuario',
+    'UsuarioServicio'
+]

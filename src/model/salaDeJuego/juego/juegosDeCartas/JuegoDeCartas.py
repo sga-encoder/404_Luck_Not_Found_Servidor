@@ -1,9 +1,9 @@
 from typing import override
-from src.model.salaDeJuego.juego.juegosDeCartas.Mazo import Mazo
-from src.model.salaDeJuego.SalaDeJuego import SalaDeJuego
+from servidor.src.model.salaDeJuego.juego.juegosDeCartas.Mazo import Mazo
+from servidor.src.model.salaDeJuego.SalaDeJuego import SalaDeJuego
 from abc import ABC, abstractmethod
 
-from src.model.usuario.Usuario import Usuario
+from servidor.src.model.usuario.Usuario import Usuario
 
 class JuegoDeCartas(SalaDeJuego, ABC):
     _mazo: Mazo

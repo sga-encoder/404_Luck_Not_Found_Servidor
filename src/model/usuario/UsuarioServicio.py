@@ -1,6 +1,6 @@
 import asyncio
-from model.usuario.Usuario import Usuario
-from utils.firestore import add_data_with_id, delete_data, get_data, update_data, get_collection_data, increment, decrement, array_union
+from .Usuario import Usuario
+from ...utils.firestore import add_data_with_id, delete_data, get_data, update_data, get_collection_data, increment, decrement, array_union
 
 class UsuarioServicio:
     """
@@ -142,6 +142,72 @@ class UsuarioServicio:
         
         usuario_id = await update_data('usuarios', id, {'historial': array_union([historial])})
         print(f'historial actualizado del usuario: {usuario_id}')
+
+    async def buscar_usuario_por_correo(self, correo: str) -> Usuario | None:
+        """
+        Busca un usuario por su correo electrónico en Firestore.
+
+        Args:
+            correo (str): Correo electrónico del usuario a buscar.
+
+        Returns:
+            Usuario | None: Instancia de Usuario si se encuentra, None si no existe.
+        """
+        try:
+            usuarios_dict = await get_collection_data('usuarios')
+            for usuario_dict in usuarios_dict:
+                if usuario_dict.get('correo') == correo:
+                    return Usuario.from_dict(usuario_dict)
+            return None
+        except Exception as e:
+            print(f"Error al buscar usuario por correo: {e}")
+            return None
+
+    async def autenticar_usuario(self, correo: str, contraseña: str) -> dict:
+        """
+        Autentica un usuario verificando correo y contraseña.
+
+        Args:
+            correo (str): Correo electrónico del usuario.
+            contraseña (str): Contraseña del usuario.
+
+        Returns:
+            dict: Diccionario con el resultado de la autenticación.
+                - success (bool): True si la autenticación es exitosa.
+                - message (str): Mensaje descriptivo del resultado.
+                - user (Usuario | None): Instancia del usuario si la autenticación es exitosa.
+        """
+        try:
+            # Buscar usuario por correo
+            usuario = await self.buscar_usuario_por_correo(correo)
+            
+            if usuario is None:
+                return {
+                    'success': False,
+                    'message': 'Correo no registrado',
+                    'user': None
+                }
+            
+            # Verificar contraseña
+            if usuario.get_contraseña() == contraseña:
+                return {
+                    'success': True,
+                    'message': 'Inicio de sesión exitoso',
+                    'user': usuario
+                }
+            else:
+                return {
+                    'success': False,
+                    'message': 'Contraseña incorrecta',
+                    'user': None
+                }
+                
+        except Exception as e:
+            return {
+                'success': False,
+                'message': f'Error en la autenticación: {str(e)}',
+                'user': None
+            }
         
 async def main():
     usuario_servicio = UsuarioServicio()

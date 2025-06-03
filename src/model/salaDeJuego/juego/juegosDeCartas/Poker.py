@@ -1,6 +1,6 @@
-from model.salaDeJuego.enums.Etapas import Etapas
-from model.usuario.Usuario import Usuario
-from model.salaDeJuego.juego.juegosDeCartas.JuegoDeCartas import JuegoDeCartas
+from servidor.src.model.salaDeJuego.enums.Etapas import Etapas
+from servidor.src.model.usuario.Usuario import Usuario
+from servidor.src.model.salaDeJuego.juego.juegosDeCartas.JuegoDeCartas import JuegoDeCartas
 
 
 
@@ -331,7 +331,7 @@ class Poker(JuegoDeCartas):
         jugadores = self._jugadores
         turno = 0
         acciones_realizadas = set()
-        from model.salaDeJuego.enums.Etapas import Etapas
+        from servidor.src.model.salaDeJuego.enums.Etapas import Etapas
         def limpiar():
             import os, sys
             os.system('cls' if sys.platform == 'win32' else 'clear')
