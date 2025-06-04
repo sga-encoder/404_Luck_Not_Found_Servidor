@@ -92,7 +92,7 @@ class SalaDeJuegoServicio:
         print(f'Sala de juego guardada con ID: {sala_id}')
         return sala_id
 
-    async def obtener_sala_de_juego(self, id: str) -> SalaDeJuego:
+    async def obtener_sala_de_juegos_activa(self, id: str) -> SalaDeJuego:
         """
         Obtiene una sala de juego de la colección 'salas_de_juego' en Firestore.
         Args:
@@ -100,10 +100,18 @@ class SalaDeJuegoServicio:
         Returns:
             SalaDeJuego: Instancia de SalaDeJuego con los datos obtenidos.
         """
-        sala_dict = await get_data('salas_de_juego', id)
+        sala_dict = await get_data('salas_de_juego_activas', id)
         # Aquí deberías tener un método from_dict en SalaDeJuego para reconstruir la instancia
         # return SalaDeJuego.from_dict(sala_dict)
         return sala_dict
+    
+    async def obtener_collection_salas_de_juego(self) -> list:
+        """
+        Obtiene todas las salas de juego activas de la colección 'salas_de_juego_activas' en Firestore.
+        Returns:
+            list: Lista de diccionarios con los datos de las salas de juego activas.
+        """
+        return await get_collection_data('salas_de_juego_activas')
 
     async def crear_sala_de_juego_activa(self, tipo_juego: str, jugadores: list) -> str:
         """

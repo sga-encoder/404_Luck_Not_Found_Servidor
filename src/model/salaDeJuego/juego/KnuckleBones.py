@@ -17,7 +17,7 @@ class KnuckleBones(SalaDeJuego):
                                 [0, 0, 0]
                             ],[
                                 [0, 0, 0], 
-                                [0, 0, 0], 
+                                [0, 0, 0],
                                 [0, 0, 0]
                             ]]
         self._cantidad_de_dados_puestos = [0, 0]

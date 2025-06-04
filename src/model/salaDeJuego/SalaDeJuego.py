@@ -88,10 +88,20 @@ class SalaDeJuego(ABC):
   def set_apuestas(self, apuestas: list):
     self._apuestas = apuestas
 
-  def crear_sala_de_juego(self, diccionario: dict):
+  def crear_sala_de_juego(self, diccionario: dict, usuario: Usuario = None):
     import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
     servicio = SalaDeJuegoServicio()
-    self._id = servicio.crear_sala_de_juego(diccionario)
+    if usuario is not None:
+      salas_activas = servicio.obtener_collection_salas_de_juego()
+      for sala in salas_activas:
+        if sala.get('tipo_juego') == diccionario.get('tipo_juego') and len(sala.get('jugadores', [])) < sala.get('capacidad'):
+          servicio.entrar_sala_de_juego(sala.get('id'), usuario)
+          self._id = sala.get('id')
+          print(f"{usuario} ha entrado a la sala de juego.")
+          break
+
+    else:
+      self._id = servicio.crear_sala_de_juego(diccionario)
 
   # def iniciar_juego(self, juego: Juegos):
   #   """
@@ -106,27 +116,33 @@ class SalaDeJuego(ABC):
   #   self._historial.append(f"Juego iniciado: {juego.name} a las {datetime.now()}")
   #   self._turnoActivo = self._jugadores[0]  # El primer jugador toma el turno inicial
   
-  def entrar_sala_de_juego(self, usuario: Usuario):
+  def entrar_sala_de_juego(self, usuario: Usuario, diccionario: dict = None):
     """
     Permite que un usuario entre a la sala de juego.
     Si la sala está llena, el usuario será agregado a la lista de espera.
     """
     import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
     servicio = SalaDeJuegoServicio()
-    if len(self._jugadores) < self._capacidad:
-        self._jugadores.append(usuario)
-        servicio.entrar_sala_de_juego(self._id, usuario)
-        print(f"{usuario} ha entrado a la sala de juego.")
-        # Establecer el turno activo si es el primer jugador
-        # if len(self._jugadores) == 0:
-        #     self._turnoActivo = usuario
-    else:
-      if len(self.__listaDeEspera) > self._capacidadMinima:  # Limitar la lista de espera a 10 usuarios
-          print("creando...una nueva sala de juego")
+    if diccionario is not None:
+      if len(self._jugadores) < self._capacidad:
+          self._jugadores.append(usuario)
+          servicio.entrar_sala_de_juego(self._id, usuario)
+          print(f"{usuario} ha entrado a la sala de juego.")
       else:
-        self.__listaDeEspera.append(usuario)
-        servicio.agregar_jugador_a_lista_de_espera(self._id, usuario)
-        print(f"{usuario} ha sido agregado a la lista de espera.")
+        if len(self.__listaDeEspera) > self._capacidadMinima:  # Limitar la lista de espera a 10 usuarios
+            print("creando...una nueva sala de juego")
+        else:
+          self.__listaDeEspera.append(usuario)
+          servicio.agregar_jugador_a_lista_de_espera(self._id, usuario)
+          print(f"{usuario} ha sido agregado a la lista de espera.")
+    else:
+      salas_activas = servicio.obtener_collection_salas_de_juego()
+      for sala in salas_activas:
+        if sala.get('tipo_juego') == diccionario.get('tipo_juego') and len(sala.get('jugadores', [])) < sala.get('capacidad'):
+          servicio.entrar_sala_de_juego(sala.get('id'), usuario)
+          self._id = sala.get('id')
+          print(f"{usuario} ha entrado a la sala de juego.")
+          break
 
   def salir_sala_de_juego(self, usuario: Usuario):
     """
