@@ -1,6 +1,6 @@
 from typing import override
-from servidor.src.model.usuario.Usuario import Usuario
-from servidor.src.model.salaDeJuego.enums import Juegos
+from ..usuario import Usuario
+from .enums import Juegos
 from datetime import datetime
 from abc import ABC, abstractmethod
 import json
@@ -33,7 +33,7 @@ class SalaDeJuego(ABC):
 
   def set_id(self, id: str):
     self._id = id
-  
+
   def get_capacidad(self) -> int:
     return self._capacidad
 
@@ -54,7 +54,7 @@ class SalaDeJuego(ABC):
     # Inicializar el turno activo al primer jugador
     if jugadores and len(jugadores) > 0:
         self.set_turnoActivo(jugadores[0])
-    
+
   def get_jugador_activo_index(self) -> int:
     return self.get_jugadores().index(self.get_turnoActivo())
 
@@ -66,10 +66,10 @@ class SalaDeJuego(ABC):
 
   def get_historial(self) -> list:
     return self._historial
-  
+
   def set_historial(self, historial: list):
     self._historial = historial
-    
+
   def get_fechaHoraInicio(self) -> datetime:
     return self._fechaHoraInicio
 
@@ -87,7 +87,7 @@ class SalaDeJuego(ABC):
 
   def set_apuestas(self, apuestas: list):
     self._apuestas = apuestas
-    
+
   def crear_sala_de_juego(self, diccionario: dict):
     import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
     servicio = SalaDeJuegoServicio()

@@ -1,5 +1,7 @@
 import asyncio
+import uuid
 from .SalaDeJuego import SalaDeJuego
+from datetime import datetime
 from ..usuario import Usuario
 from ...utils.firestore import add_data, add_data_with_id, array_remove, array_union, delete_data, get_data, update_data, get_collection_data
 
@@ -102,3 +104,54 @@ class SalaDeJuegoServicio:
         # Aquí deberías tener un método from_dict en SalaDeJuego para reconstruir la instancia
         # return SalaDeJuego.from_dict(sala_dict)
         return sala_dict
+
+    async def crear_sala_de_juego_activa(self, tipo_juego: str, jugadores: list) -> str:
+        """
+        Crea una nueva sala de juego activa con ID aleatorio en Firestore.
+        Args:
+            tipo_juego (str): Tipo de juego (BlackJack, Poker, etc.)
+            jugadores (list): Lista opcional de jugadores iniciales
+        Returns:
+            str: ID de la sala creada
+        """
+        sala_id = str(uuid.uuid4())[:8]  # ID aleatorio de 8 caracteres
+        
+        sala_data = {
+            "id": sala_id,
+            "tipo_juego": tipo_juego,
+            "estado": "activa",
+            "jugadores": jugadores if jugadores else [],
+            "fecha_creacion": str(datetime.now()),
+            "manos_jugadores": {} if tipo_juego == "BlackJack" else None,
+            "mano_crupier": [] if tipo_juego == "BlackJack" else None,
+            "turno_actual": 0 if jugadores else None,
+            "apuestas": {},
+            "historial": []
+        }
+        
+        await add_data_with_id('salas_de_juego_activas', sala_data, sala_id)
+        print(f'Sala de juego activa creada con ID: {sala_id}')
+        return sala_id
+
+    async def actualizar_manos_blackjack(self, sala_id: str, manos_jugadores: dict, mano_crupier: list):
+        """
+        Actualiza las manos de los jugadores y del crupier en una sala de BlackJack.
+        """
+        await update_data('salas_de_juego_activas', sala_id, {
+            'manos_jugadores': manos_jugadores,
+            'mano_crupier': mano_crupier
+        })
+
+    async def agregar_jugador_a_sala_activa(self, sala_id: str, jugador_id: str):
+        """
+        Agrega un jugador a una sala activa.
+        """
+        await update_data('salas_de_juego_activas', sala_id, {
+            'jugadores': array_union([jugador_id])
+        })
+
+    async def obtener_sala_activa(self, sala_id: str):
+        """
+        Obtiene los datos de una sala activa.
+        """
+        return await get_data('salas_de_juego_activas', sala_id)

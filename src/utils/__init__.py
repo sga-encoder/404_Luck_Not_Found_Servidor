@@ -11,7 +11,7 @@ from .Util import generador_random
 # Importar funciones y clase de Firestore
 from .firestore import (
     Firestore,
-    ingrement,
+    increment,
     decrement,
     array_union
 )
@@ -20,7 +20,7 @@ from .firestore import (
 __all__ = [
     'generador_random',
     'Firestore',
-    'ingrement',
+    'increment',
     'decrement',
     'array_union'
 ]

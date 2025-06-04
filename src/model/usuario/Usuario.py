@@ -24,6 +24,8 @@ class Usuario:
     _apellido: str
     _saldo: float
     _total_apostado: float
+    _correo: str
+    _contraseña: str
     _historial: list
 
     def __init__(
@@ -31,6 +33,8 @@ class Usuario:
         id: str,
         nombre: str,
         apellido: str,
+        correo: str,
+        contraseña: str,
         saldo: float = 0.0,
         total_apostado: float = 0.0,
         historial: list = [],
@@ -48,26 +52,34 @@ class Usuario:
         """
         self.set_nombre(nombre)
         self.set_apellido(apellido)
+        self.set_correo(correo)
+        self.set_contraseña(contraseña)
         self.set_id(id) 
         self.set_saldo(saldo)
         self.set_total_apostado(total_apostado)
         self.__set_historial(historial)
         
     @classmethod
-    def crear_usuario(cls, nombre: str, apellido: str, saldo: float = 0.0):
+    async def crear_usuario(cls, nombre: str, apellido: str, correo: str, contraseña: str) -> 'Usuario':
+        from .UsuarioServicio import UsuarioServicio
         """
-        Inicializa un nuevo usuario
-
+        Inicializa un nuevo usuario           
         Args:
             nombre (str): Nombre del usuario
             apellido (str): Apellido del usuario
-            saldo (float, optional): Saldo inicial. Por defecto 0.0
+            correo (str): Correo del usuario
+            contraseña (str): Contraseña del usuario
         """
+        servicio = UsuarioServicio()
         id = ""  # Generate or assign an ID as needed
         total_apostado = 0.0
         historial = []
-        return cls(id, nombre, apellido, saldo, total_apostado, historial)
+        saldo = 1000.0
+        user = cls(id, nombre, apellido, correo, contraseña, saldo, total_apostado, historial)
+        await servicio.agregar_usuario(user)
+        return user
         
+
     @classmethod
     def from_dict(cls, data: dict):
         """
@@ -84,9 +96,11 @@ class Usuario:
         apellido = data.get('apellido', '')
         saldo = data.get('saldo', 0.0)
         total_apostado = data.get('total_apostado', 0.0)
+        correo = data.get('correo', '')
+        contraseña = data.get('contraseña', '')
         historial = data.get('historial', [])
-        
-        return cls(id, nombre, apellido, saldo, total_apostado, historial)
+
+        return cls(id, nombre, apellido, correo, contraseña, saldo, total_apostado, historial)
 
     def get_id(self) -> str:
         """Retorna el ID del usuario"""
@@ -107,6 +121,14 @@ class Usuario:
     def get_total_apostado(self) -> float:
         """Retorna el total apostado por el usuario"""
         return self._total_apostado
+    
+    def get_correo(self) -> str:
+        """Retorna el correo del usuario"""
+        return self._correo
+    
+    def get_contraseña(self) -> str:
+        """Retorna la contraseña del usuario"""
+        return self._contraseña
 
     def get_historial(self) -> list:
         """Retorna el historial de transacciones del usuario"""
@@ -199,6 +221,35 @@ class Usuario:
             self._total_apostado = total_apostado
         else:
             raise ValueError("El total apostado no puede ser negativo")
+        
+    def set_correo(self, correo: str) -> None:
+        """
+        Establece el correo del usuario
+
+        Args:
+            correo (str): Nuevo correo
+
+        Raises:
+            ValueError: Si el correo es inválido
+        """
+        if "@" in correo and "." in correo:
+            self._correo = correo
+        else:
+            raise ValueError("El correo debe contener '@' y '.'")
+    def set_contraseña(self, contraseña: str) -> None:
+        """
+        Establece la contraseña del usuario
+
+        Args:
+            contraseña (str): Nueva contraseña
+
+        Raises:
+            ValueError: Si la contraseña es inválida
+        """
+        if len(contraseña) >= 3:
+            self._contraseña = contraseña
+        else:
+            raise ValueError("La contraseña debe tener al menos 3 caracteres")
 
     def __set_historial(self, historial: list) -> None:
         """
@@ -292,6 +343,8 @@ class Usuario:
             "apellido": self._apellido,
             "saldo": self._saldo,
             "total_apostado": self._total_apostado,
+            "correo": self._correo,
+            "contraseña": self._contraseña,
             "historial": self._historial
         }
 
@@ -302,5 +355,7 @@ class Usuario:
             f"apellido: {self._apellido}\n"
             f"saldo: {self._saldo}\n"
             f"total_apostado: {self._total_apostado}\n"
+            f"correo: {self._correo}\n"
+            f"contraseña: {self._contraseña}\n"
             f"historial: {self._historial}\n"
         )

@@ -4,6 +4,13 @@ Módulo principal del servidor para el Casino Virtual
 
 __version__ = "0.1.0"
 __description__ = "Raíz de la aplicación del servidor"
+
+# Importar las clases principales del modelo para facilitar el acceso
+from .model import (
+    Usuario, UsuarioServicio,
+    SalaDeJuego, SalaDeJuegoServicio,
+    JuegoDeCartas, Mazo, BlackJack, Poker
+)
 __author__ = "sga-encoder"
 
 # Configurar el path para las importaciones

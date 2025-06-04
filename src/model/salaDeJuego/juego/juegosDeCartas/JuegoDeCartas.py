@@ -1,9 +1,9 @@
 from typing import override
-from servidor.src.model.salaDeJuego.juego.juegosDeCartas.Mazo import Mazo
-from servidor.src.model.salaDeJuego.SalaDeJuego import SalaDeJuego
+from .Mazo import Mazo
+from ...SalaDeJuego import SalaDeJuego
 from abc import ABC, abstractmethod
 
-from servidor.src.model.usuario.Usuario import Usuario
+from ....usuario.Usuario import Usuario
 
 class JuegoDeCartas(SalaDeJuego, ABC):
     _mazo: Mazo
@@ -11,14 +11,19 @@ class JuegoDeCartas(SalaDeJuego, ABC):
     _valor_entrada_mesa: int
     _mano_de_jugadores: list
     _mano_de_casino: list
+    
     def __init__(self, id: str, capacidad: int, capacidadMinima: int, valor_entrada_mesa: int):
-        super().__init__(id, capacidad, capacidadMinima)
+        # ARREGLO: SalaDeJuego solo acepta capacidad y capacidadMinima
+        super().__init__(capacidad, capacidadMinima)
+        
+        # Establecer el ID después de la inicialización del padre
+        self._id = id
+        
         self._mazo = Mazo(52)
         self._monto_descartes = []
         self._valor_entrada_mesa = valor_entrada_mesa
         self._mano_de_jugadores = []
         self._mano_de_casino = []
-    
 
     def get_mano_casino(self) -> list:
         """
@@ -33,7 +38,7 @@ class JuegoDeCartas(SalaDeJuego, ABC):
         self._mano_de_casino = mano_de_casino
     
     @abstractmethod
-    def  repartir_cartas(self)-> str:
+    def repartir_cartas(self) -> str:
         """
         Método abstracto para repartir cartas.
         Cada juego de cartas debe implementar su propia lógica.

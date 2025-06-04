@@ -53,24 +53,19 @@ def initialize_firebase():
     firebase_admin.initialize_app(cred)
     _firebase_initialized = True
 
-# Inicializar Firebase al importar el módulo
-initialize_firebase()
-
 class Firestore:
     """
-    Clase para manejar las operaciones con Firestore.
+    Clase para gestionar operaciones de Firestore de manera asíncrona.
     """
+    
     @staticmethod
     async def get_async_client():
         """
         Obtiene el cliente asíncrono de Firestore.
-
-        Returns:
-            firestore_async.client: Cliente asíncrono de Firestore.
         """
-        db = firestore_async.client()
-        return db
-
+        initialize_firebase()
+        return firestore_async.client()
+    
     @staticmethod
     async def add_data(collection_name: str, data: dict) -> str:
         """
@@ -80,7 +75,6 @@ class Firestore:
             collection_name (str): Nombre de la colección.
             data (dict): Datos a agregar.
 
-<<<<<<< HEAD
         Returns:
             str: ID del documento agregado.
         """
@@ -88,11 +82,6 @@ class Firestore:
         doc_ref = db.collection(collection_name).document()
         await doc_ref.set(data)
         return doc_ref.id
-=======
-async def get_data(collection_name: str, id: str) -> Optional[Dict[str, Any]]:
-    """
-    Obtiene un documento de una colección en Firestore.
->>>>>>> aa13894fdefe2996a091058a08dc8658054cd535
 
     @staticmethod
     async def add_data_with_id(collection_name: str, data: dict, id: str) -> str:
@@ -104,7 +93,6 @@ async def get_data(collection_name: str, id: str) -> Optional[Dict[str, Any]]:
             data (dict): Datos a agregar.
             id (str): ID del documento.
 
-<<<<<<< HEAD
         Returns:
             str: ID del documento agregado.
         """
@@ -112,14 +100,9 @@ async def get_data(collection_name: str, id: str) -> Optional[Dict[str, Any]]:
         doc_ref = db.collection(collection_name).document(id)
         await doc_ref.set(data)
         return doc_ref.id
-=======
-async def get_collection_data(collection_name: str) -> List[Optional[Dict[str, Any]]]:
-    """
-    Obtiene todos los documentos de una colección en Firestore.
->>>>>>> aa13894fdefe2996a091058a08dc8658054cd535
 
     @staticmethod
-    async def get_data(collection_name: str, id: str) -> dict:
+    async def get_data(collection_name: str, id: str) -> Optional[Dict[str, Any]]:
         """
         Obtiene un documento de una colección en Firestore.
 
@@ -128,15 +111,15 @@ async def get_collection_data(collection_name: str) -> List[Optional[Dict[str, A
             id (str): ID del documento.
 
         Returns:
-            dict: Datos del documento.
+            Optional[Dict[str, Any]]: Datos del documento o None si no existe.
         """
         db = await Firestore.get_async_client()
         doc_ref = db.collection(collection_name).document(id)
         doc = await doc_ref.get()
-        return doc.to_dict()
+        return doc.to_dict() if doc.exists else None
 
     @staticmethod
-    async def get_collection_data(collection_name: str) -> list:
+    async def get_collection_data(collection_name: str) -> List[Optional[Dict[str, Any]]]:
         """
         Obtiene todos los documentos de una colección en Firestore.
 
@@ -144,7 +127,7 @@ async def get_collection_data(collection_name: str) -> List[Optional[Dict[str, A
             collection_name (str): Nombre de la colección.
 
         Returns:
-            list[dict]: Lista de documentos en la colección.
+            List[Optional[Dict[str, Any]]]: Lista de documentos.
         """
         db = await Firestore.get_async_client()
         docs_ref = db.collection(collection_name).stream()
@@ -174,7 +157,6 @@ async def get_collection_data(collection_name: str) -> List[Optional[Dict[str, A
         """
         Elimina un documento de una colección en Firestore.
 
-<<<<<<< HEAD
         Args:
             collection_name (str): Nombre de la colección.
             id (str): ID del documento.
@@ -188,44 +170,47 @@ async def get_collection_data(collection_name: str) -> List[Optional[Dict[str, A
         return doc_ref.id
 
 # Funciones de ayuda para operaciones de Firestore
-def ingrement(num: int):
-    return firestore.Increment(num)
-=======
 def increment(num: float):
+    """Incrementa un valor numérico en Firestore."""
     return Increment(num)
->>>>>>> aa13894fdefe2996a091058a08dc8658054cd535
 
 def decrement(num: float):
+    """Decrementa un valor numérico en Firestore."""
     return Increment(-num)
 
 def array_union(array: list):
+    """Añade elementos a un array sin duplicados."""
     return ArrayUnion(array)
 
 def array_remove(array: list):
-<<<<<<< HEAD
-    return firestore.ArrayRemove(array)
+    """Remueve elementos de un array."""
+    return ArrayRemove(array)
 
 # Funciones globales para mantener compatibilidad con código existente
 async def get_async_firestore_client():
+    """Obtiene el cliente asíncrono de Firestore."""
     return await Firestore.get_async_client()
 
 async def add_data(collection_name: str, data: dict) -> str:
+    """Agrega un documento a una colección."""
     return await Firestore.add_data(collection_name, data)
 
 async def add_data_with_id(collection_name: str, data: dict, id: str) -> str:
+    """Agrega un documento con ID específico."""
     return await Firestore.add_data_with_id(collection_name, data, id)
 
-async def get_data(collection_name: str, id: str) -> dict:
+async def get_data(collection_name: str, id: str) -> Optional[Dict[str, Any]]:
+    """Obtiene un documento por ID."""
     return await Firestore.get_data(collection_name, id)
 
-async def get_collection_data(collection_name: str) -> list:
+async def get_collection_data(collection_name: str) -> List[Optional[Dict[str, Any]]]:
+    """Obtiene todos los documentos de una colección."""
     return await Firestore.get_collection_data(collection_name)
 
 async def update_data(collection_name: str, id: str, data: dict) -> str:
+    """Actualiza un documento."""
     return await Firestore.update_data(collection_name, id, data)
 
 async def delete_data(collection_name: str, id: str) -> str:
+    """Elimina un documento."""
     return await Firestore.delete_data(collection_name, id)
-=======
-    return ArrayRemove(array)
->>>>>>> aa13894fdefe2996a091058a08dc8658054cd535
