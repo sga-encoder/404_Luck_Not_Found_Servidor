@@ -1,5 +1,6 @@
 import copy
 from servidor.src.model.salaDeJuego.SalaDeJuego import SalaDeJuego
+from servidor.src.model.usuario import Usuario
 from servidor.src.utils.Util import generador_random
 
 
@@ -9,8 +10,10 @@ class KnuckleBones(SalaDeJuego):
     _turno: int
     _historial: list
 
-    def __init__(self, id: str):
-        super().__init__(id, 2, 2)
+    def __init__(self):
+        # from cliente.utils.user_session import UserSessionManager
+        # usuario_data = UserSessionManager().load_user_session()
+        super().__init__(1, 1)
         self._mesa_de_juego = [[
                                 [0, 0, 0], 
                                 [0, 0, 0], 
@@ -22,6 +25,8 @@ class KnuckleBones(SalaDeJuego):
                             ]]
         self._cantidad_de_dados_puestos = [0, 0]
         self._turno = 0
+        # usuario = Usuario().from_dict(usuario_data)
+        # self.entrar_sala_de_juego(usuario)
 
     def get_mesa_de_juego(self) -> list:
         return self._mesa_de_juego
@@ -303,6 +308,20 @@ class KnuckleBones(SalaDeJuego):
         else:
             print("El juego no es KnuckleBones")
             return False
+        
+    def to_dict(self):
+        # Obtener los atributos de la clase padre
+        parent_dict = super().to_dict()
+        
+        # Agregar los atributos específicos de KnuckleBones
+        parent_dict.update({
+            'mesa_de_juego': self._mesa_de_juego,
+            'cantidad_de_dados_puestos': self._cantidad_de_dados_puestos,
+            'turno': self._turno,
+            'historial': self._historial
+        })
+        
+        return parent_dict
 
     def __repr__(self) -> str:
         return (f"{super().__repr__()}"

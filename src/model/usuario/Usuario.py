@@ -78,6 +78,26 @@ class Usuario:
         user = cls(id, nombre, apellido, correo, contraseña, saldo, total_apostado, historial)
         await servicio.agregar_usuario(user)
         return user
+    
+    @classmethod
+    def crear_usuario_local(cls, nombre: str, apellido: str) -> 'Usuario':
+        """
+        Crea un usuario local sin conexión a la base de datos
+
+        Args:
+            nombre (str): Nombre del usuario
+            apellido (str): Apellido del usuario
+
+        Returns:
+            Usuario: Nueva instancia de Usuario
+        """
+        id = ""
+        correo = "x@x.com"
+        contraseña = "xxxx"
+        saldo = 1000.0
+        total_apostado = 0.0
+        historial = []
+        return cls(id, nombre, apellido, correo, contraseña, saldo, total_apostado, historial)
         
 
     @classmethod

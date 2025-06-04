@@ -21,3 +21,5 @@ def generador_random(minimo: int, maximo: int) -> int:
         7
     """
     return secrets.randbelow(maximo - minimo + 1) + minimo
+
+    

@@ -27,6 +27,18 @@ class SalaDeJuego(ABC):
     self._fechaHoraInicio = datetime.now()
     self.__listaDeEspera = []
     self._apuestas = []
+  @classmethod
+  def from_dict(self, data: dict):
+    self.id = data.get('id')
+    self._capacidad = data.get('capacidad', 0)
+    self._capacidadMinima = data.get('capacidad_minima', 0)
+    self._jugadores = data.get('jugadores', [])
+    self._turnoActivo = data.get('turnoActivo', None)
+    self._historial = data.get('historial', [])
+    self._fechaHoraInicio = datetime.fromisoformat(data.get('fechaHoraInicio', datetime.now().isoformat()))
+    self.__listaDeEspera = data.get('listaDeEspera', [])
+    self._apuestas = data.get('apuestas', [])
+    
 
   def get_id(self) -> str:
     return self._id
@@ -88,20 +100,10 @@ class SalaDeJuego(ABC):
   def set_apuestas(self, apuestas: list):
     self._apuestas = apuestas
 
-  def crear_sala_de_juego(self, diccionario: dict, usuario: Usuario = None):
+  def crear_sala_de_juego(self, diccionario: dict):
     import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
     servicio = SalaDeJuegoServicio()
-    if usuario is not None:
-      salas_activas = servicio.obtener_collection_salas_de_juego()
-      for sala in salas_activas:
-        if sala.get('tipo_juego') == diccionario.get('tipo_juego') and len(sala.get('jugadores', [])) < sala.get('capacidad'):
-          servicio.entrar_sala_de_juego(sala.get('id'), usuario)
-          self._id = sala.get('id')
-          print(f"{usuario} ha entrado a la sala de juego.")
-          break
-
-    else:
-      self._id = servicio.crear_sala_de_juego(diccionario)
+    self._id = servicio.crear_sala_de_juego(diccionario)
 
   # def iniciar_juego(self, juego: Juegos):
   #   """
@@ -123,26 +125,29 @@ class SalaDeJuego(ABC):
     """
     import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
     servicio = SalaDeJuegoServicio()
-    if diccionario is not None:
-      if len(self._jugadores) < self._capacidad:
-          self._jugadores.append(usuario)
-          servicio.entrar_sala_de_juego(self._id, usuario)
-          print(f"{usuario} ha entrado a la sala de juego.")
-      else:
-        if len(self.__listaDeEspera) > self._capacidadMinima:  # Limitar la lista de espera a 10 usuarios
-            print("creando...una nueva sala de juego")
-        else:
-          self.__listaDeEspera.append(usuario)
-          servicio.agregar_jugador_a_lista_de_espera(self._id, usuario)
-          print(f"{usuario} ha sido agregado a la lista de espera.")
+    salas_activas = servicio.obtener_collection_salas_de_juego()
+    for sala in salas_activas:
+      if sala.get('tipo_juego') == diccionario.get('tipo_juego') and len(sala.get('jugadores', [])) < sala.get('capacidad'):
+        servicio.entrar_sala_de_juego(sala.get('id'), usuario)
+        self._id = sala.get('id')
+        print(f"{usuario} ha entrado a la sala de juego.")
+        return
+      
+    if self._id is None:
+      self.crear_sala_de_juego(diccionario)
+      
+    if len(self._jugadores) < self._capacidad:
+      self._jugadores.append(usuario)
+      servicio.entrar_sala_de_juego(self._id, usuario)
+      print(f"{usuario} ha entrado a la sala de juego.")
     else:
-      salas_activas = servicio.obtener_collection_salas_de_juego()
-      for sala in salas_activas:
-        if sala.get('tipo_juego') == diccionario.get('tipo_juego') and len(sala.get('jugadores', [])) < sala.get('capacidad'):
-          servicio.entrar_sala_de_juego(sala.get('id'), usuario)
-          self._id = sala.get('id')
-          print(f"{usuario} ha entrado a la sala de juego.")
-          break
+      if len(self.__listaDeEspera) > self._capacidadMinima:  # Limitar la lista de espera a 10 usuarios
+          print("creando...una nueva sala de juego")
+      else:
+        self.__listaDeEspera.append(usuario)
+        servicio.agregar_jugador_a_lista_de_espera(self._id, usuario)
+        print(f"{usuario} ha sido agregado a la lista de espera.")
+    
 
   def salir_sala_de_juego(self, usuario: Usuario):
     """
