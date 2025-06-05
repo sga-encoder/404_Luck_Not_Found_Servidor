@@ -37,6 +37,9 @@ class BlackJack(JuegoDeCartas):
             puntos -= 10
         return puntos
 
+    def doblar(self, jugador: Usuario):
+        print("falta implementar doblear()")
+        pass
 
     def separar(self, jugador: Usuario):
         print("falta implementar separar()")
@@ -94,25 +97,30 @@ class BlackJack(JuegoDeCartas):
         except Exception as e:
             print(f"Error creando sala activa: {e}")
             return None
-    
 
-    def inicializar_juego(self):
+    def inicializar_juego(self, jugador_usuario=None):
         """Inicializa el juego de BlackJack para 4 jugadores más el crupier."""
+        # Crear 3 jugadores automáticos
+        jugadores = [Usuario.crear_usuario_local(f"Jugador {i+1}", f"Apellido {i+1}") for i in range(3)]
         # Agregar el usuario real si se proporciona
+        if jugador_usuario:
+            jugadores.append(jugador_usuario)
+        else:
+            # Crear un jugador por defecto si no se proporciona
+            jugadores.append(Usuario.crear_usuario_local("Jugador 4", "Principal"))
         manos_jugadores = [self.cartasIniciales() for _ in range(4)]
         mano_crupier = self.cartasIniciales()
         plantados = [False] * 4
-        jugadores=self.get_jugadores()
+
         for i, mano in enumerate(manos_jugadores):
             while not plantados[i]:
-                print(f"{jugadores[3].get_nombre()} esta esperando a los demás jugadores...")
-                print(f"\nTurno de {jugadores[i].get_nombre()}:")
+                print(f"\nTurno de {jugadores[i]._nombre}:")
                 self.mostrar_CartasYPuntos(mano, mano_crupier)
                 puntos = self.calcular_puntos(mano)
                 if puntos >= 21:
                     plantados[i] = True
                     break
-                plantarse = str(input(f"{jugadores[i].get_nombre()}, ¿Quieres plantarte? (S/N): ").lower())
+                plantarse = str(input(f"{jugadores[i]._nombre}, ¿Quieres plantarte? (S/N): ").lower())
                 if plantarse == "n":
                     mano.append(self.repartir_cartas())
                 elif plantarse == "s":
@@ -127,7 +135,7 @@ class BlackJack(JuegoDeCartas):
 
         # Determinar ganadores
         for i, mano in enumerate(manos_jugadores):
-            print(f"\nResultado para {jugadores[i].get_nombre()}:")
+            print(f"\nResultado para {jugadores[i]._nombre}:")
             self.ganador(mano, mano_crupier)
 
     def __repr__(self):

@@ -2,6 +2,7 @@ import copy
 from servidor.src.model.salaDeJuego.SalaDeJuego import SalaDeJuego
 from servidor.src.model.usuario import Usuario
 from servidor.src.utils.Util import generador_random
+from servidor.src.model.salaDeJuego.SalaDeJuegoServicio import SalaDeJuegoServicio
 
 
 class KnuckleBones(SalaDeJuego):
@@ -14,17 +15,23 @@ class KnuckleBones(SalaDeJuego):
         # from cliente.utils.user_session import UserSessionManager
         # usuario_data = UserSessionManager().load_user_session()
         super().__init__(1, 1)
-        self._mesa_de_juego = [[
-                                [0, 0, 0], 
-                                [0, 0, 0], 
-                                [0, 0, 0]
-                            ],[
-                                [0, 0, 0], 
-                                [0, 0, 0],
-                                [0, 0, 0]
-                            ]]
+        # Inicializar el _id como None hasta que se establezca
+        self._id = None
+        self._mesa_de_juego = [
+            [
+                [0, 0, 0], 
+                [0, 0, 0], 
+                [0, 0, 0]
+            ],
+            [
+                [0, 0, 0], 
+                [0, 0, 0],
+                [0, 0, 0]
+            ]
+        ]
         self._cantidad_de_dados_puestos = [0, 0]
         self._turno = 0
+        self._historial = []  # Inicializar el historial
         # usuario = Usuario().from_dict(usuario_data)
         # self.entrar_sala_de_juego(usuario)
 
@@ -226,7 +233,7 @@ class KnuckleBones(SalaDeJuego):
                     contador += 1
                     if(j == 2):
                         puntos += sum_aux * contador
-                else:
+                else:                    
                     if contador > 1:
                         puntos += sum_aux * contador
                         sum_aux = 0
@@ -246,6 +253,22 @@ class KnuckleBones(SalaDeJuego):
         
     def lanzar_dado(self) -> int:
         return generador_random(1, 6)
+
+    async def sincronizar_estado_con_firestore(self):
+        """
+        Sincroniza el estado actual del juego con Firestore.
+        Actualiza la mesa_de_juego y otros datos del juego en tiempo real.
+        """
+        if self._id is not None:
+            try:
+                servicio = SalaDeJuegoServicio()
+                # Usar actualizar_sala_de_juego que actualiza en 'salas_de_juego_activas'
+                await servicio.actualizar_sala_de_juego(self._id, self.to_dict())
+                print(f"Estado del juego sincronizado con Firestore para sala {self._id}")
+            except Exception as e:
+                print(f"Error al sincronizar estado con Firestore: {e}")
+            except Exception as e:
+                print(f"Error al sincronizar estado con Firestore: {e}")
 
     def juego(self)-> str:
         index_activo = self.get_jugador_activo_index()
@@ -283,7 +306,8 @@ class KnuckleBones(SalaDeJuego):
             f" ╠═════╪═════╪═════╣     ║  {self.__get_position(0,False)+1}  │  {self.__get_position(1,False)+1}  │  {self.__get_position(2,False)+1}  ║\n"
             f" ║  {self._mesa_de_juego[0][0][0]}  │  {self._mesa_de_juego[0][1][0]}  │  {self._mesa_de_juego[0][2][0]}  ║     ║     │     │     ║\n"
             f" ╟─────┼─────┼─────╢     ║     │     │     ║\n"
-            f" ║  {self._mesa_de_juego[0][0][1]}  │  {self._mesa_de_juego[0][1][1]}  │  {self._mesa_de_juego[0][2][1]}  ║     ╚═════╧═════╧═════╝\n"            f" ╟─────┼─────┼─────╢       Jugador Activo:\n"
+            f" ║  {self._mesa_de_juego[0][0][1]}  │  {self._mesa_de_juego[0][1][1]}  │  {self._mesa_de_juego[0][2][1]}  ║     ╚═════╧═════╧═════╝\n"
+            f" ╟─────┼─────┼─────╢       Jugador Activo:\n"
             f" ║  {self._mesa_de_juego[0][0][2]}  │  {self._mesa_de_juego[0][1][2]}  │  {self._mesa_de_juego[0][2][2]}  ║           {self._turnoActivo.get_id()}\n"
             f" ╚═════╧═════╧═════╝\n"
             f"        {self._jugadores[0].get_id()}\n")
@@ -322,6 +346,43 @@ class KnuckleBones(SalaDeJuego):
         })
         
         return parent_dict
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        """
+        Método específico de KnuckleBones para crear instancia desde diccionario
+        """
+        # Crear una nueva instancia usando el constructor sin parámetros
+        instance = cls()
+        
+        # Sobrescribir los valores con los del diccionario
+        # Asegurar que _capacidadMinima tenga un valor válido
+        instance._capacidad = data.get('capacidad', 2)
+        instance._capacidadMinima = data.get('capacidad_minima', 2)
+        
+        # Asignar otros atributos del padre
+        instance._id = data.get('id')
+        instance._jugadores = data.get('jugadores', [])
+        instance._turnoActivo = data.get('turnoActivo', None)
+        instance._historial = data.get('historial', [])
+        
+        from datetime import datetime
+        fecha_str = data.get('fechaHoraInicio', datetime.now().isoformat())
+        if isinstance(fecha_str, str):
+            instance._fechaHoraInicio = datetime.fromisoformat(fecha_str)
+        else:
+            instance._fechaHoraInicio = fecha_str
+            
+        instance._SalaDeJuego__listaDeEspera = data.get('listaDeEspera', [])
+        instance._apuestas = data.get('apuestas', [])
+        
+        # Asignar atributos específicos de KnuckleBones si existen
+        instance._mesa_de_juego = data.get('mesa_de_juego', instance._mesa_de_juego)
+        instance._cantidad_de_dados_puestos = data.get('cantidad_de_dados_puestos', instance._cantidad_de_dados_puestos)
+        instance._turno = data.get('turno', instance._turno)
+        # No sobrescribir self._historial ya que es diferente del historial de SalaDeJuego
+        
+        return instance
 
     def __repr__(self) -> str:
         return (f"{super().__repr__()}"

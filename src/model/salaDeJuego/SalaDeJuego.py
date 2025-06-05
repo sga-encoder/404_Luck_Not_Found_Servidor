@@ -16,6 +16,7 @@ class SalaDeJuego(ABC):
   _fechaHoraInicio: datetime
   __listaDeEspera: list
   _apuestas: list
+  _juego: str
   
   def __init__(self, capacidad: int, capacidadMinima: int):
     # self._id = id
@@ -27,17 +28,28 @@ class SalaDeJuego(ABC):
     self._fechaHoraInicio = datetime.now()
     self.__listaDeEspera = []
     self._apuestas = []
+    self._juego = ''
+  
   @classmethod
-  def from_dict(self, data: dict):
-    self.id = data.get('id')
-    self._capacidad = data.get('capacidad', 0)
-    self._capacidadMinima = data.get('capacidad_minima', 0)
-    self._jugadores = data.get('jugadores', [])
-    self._turnoActivo = data.get('turnoActivo', None)
-    self._historial = data.get('historial', [])
-    self._fechaHoraInicio = datetime.fromisoformat(data.get('fechaHoraInicio', datetime.now().isoformat()))
-    self.__listaDeEspera = data.get('listaDeEspera', [])
-    self._apuestas = data.get('apuestas', [])
+  def from_dict(cls, data: dict):
+    # Crear una nueva instancia con los valores del diccionario
+    # Valores predeterminados apropiados para KnuckleBones
+    capacidad = data.get('capacidad', 2)
+    capacidad_minima = data.get('capacidad_minima', 2)
+    
+    # Crear instancia usando el constructor
+    instance = cls(capacidad, capacidad_minima)
+    
+    # Asignar los demás atributos
+    instance._id = data.get('id')
+    instance._jugadores = data.get('jugadores', [])
+    instance._turnoActivo = data.get('turnoActivo', None)
+    instance._historial = data.get('historial', [])
+    instance._fechaHoraInicio = datetime.fromisoformat(data.get('fechaHoraInicio', datetime.now().isoformat()))
+    instance._SalaDeJuego__listaDeEspera = data.get('listaDeEspera', [])
+    instance._apuestas = data.get('apuestas', [])
+    
+    return instance
     
 
   def get_id(self) -> str:
@@ -61,6 +73,8 @@ class SalaDeJuego(ABC):
   def get_jugadores(self) -> list:
     return self._jugadores
 
+  def get_juego(self) -> str:
+    return self._juego 
   def set_jugadores(self, jugadores):
     self._jugadores = jugadores
     # Inicializar el turno activo al primer jugador
@@ -72,6 +86,8 @@ class SalaDeJuego(ABC):
 
   def get_turnoActivo(self) -> Usuario:
     return self._turnoActivo
+  
+  
 
   def set_turnoActivo(self, turnoActivo: Usuario):
     self._turnoActivo = turnoActivo
@@ -96,58 +112,50 @@ class SalaDeJuego(ABC):
 
   def get_apuestas(self) -> list:
     return self._apuestas
-
+  def set_juego(self, juego: int):
+    self._juego = juego
+    
   def set_apuestas(self, apuestas: list):
     self._apuestas = apuestas
-
-  def crear_sala_de_juego(self, diccionario: dict):
+  async def crear_sala_de_juego(self, diccionario: dict):
     import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
     servicio = SalaDeJuegoServicio()
-    self._id = servicio.crear_sala_de_juego(diccionario)
-
-  # def iniciar_juego(self, juego: Juegos):
-  #   """
-  #   Inicializa un juego en la sala de juegos.
-  #   Verifica si hay suficientes jugadores para comenzar.
-  #   """
-  #   if len(self._jugadores) < self._capacidadMinima:
-  #       print("No hay suficientes jugadores para iniciar el juego.")
-  #       return
-
-  #   print(f"Iniciando el juego: {juego.name}")
-  #   self._historial.append(f"Juego iniciado: {juego.name} a las {datetime.now()}")
-  #   self._turnoActivo = self._jugadores[0]  # El primer jugador toma el turno inicial
-  
-  def entrar_sala_de_juego(self, usuario: Usuario, diccionario: dict = None):
+    # Ahora esta función es async para usar await correctamente
+    self._id = await servicio.crear_sala_de_juego_activa(diccionario)
+  async def entrar_sala_de_juego(self, usuario: Usuario, diccionario: dict = None):
     """
     Permite que un usuario entre a la sala de juego.
     Si la sala está llena, el usuario será agregado a la lista de espera.
     """
     import src.model.salaDeJuego.SalaDeJuegoServicio as  SalaDeJuegoServicio
     servicio = SalaDeJuegoServicio()
-    salas_activas = servicio.obtener_collection_salas_de_juego()
+    salas_activas = await servicio.obtener_collection_salas_de_juego()
     for sala in salas_activas:
       if sala.get('tipo_juego') == diccionario.get('tipo_juego') and len(sala.get('jugadores', [])) < sala.get('capacidad'):
-        servicio.entrar_sala_de_juego(sala.get('id'), usuario)
+        await servicio.entrar_sala_de_juego(sala.get('id'), usuario)
         self._id = sala.get('id')
         print(f"{usuario} ha entrado a la sala de juego.")
-        return
-      
+        return True
+        
     if self._id is None:
-      self.crear_sala_de_juego(diccionario)
+      await self.crear_sala_de_juego(diccionario)
       
     if len(self._jugadores) < self._capacidad:
       self._jugadores.append(usuario)
-      servicio.entrar_sala_de_juego(self._id, usuario)
+      await servicio.entrar_sala_de_juego(self._id, usuario)
       print(f"{usuario} ha entrado a la sala de juego.")
+      return True
     else:
-      if len(self.__listaDeEspera) > self._capacidadMinima:  # Limitar la lista de espera a 10 usuarios
-          print("creando...una nueva sala de juego")
+      # Asegurar que _capacidadMinima tenga un valor válido
+      capacidad_minima_segura = self._capacidadMinima if self._capacidadMinima is not None else 2
+      if len(self.__listaDeEspera) > capacidad_minima_segura:  # Limitar la lista de espera
+          await self.crear_sala_de_juego(diccionario)
+          
       else:
         self.__listaDeEspera.append(usuario)
-        servicio.agregar_jugador_a_lista_de_espera(self._id, usuario)
+        await servicio.agregar_jugador_a_lista_de_espera(self._id, usuario)
         print(f"{usuario} ha sido agregado a la lista de espera.")
-    
+        return False
 
   def salir_sala_de_juego(self, usuario: Usuario):
     """
@@ -262,24 +270,22 @@ class SalaDeJuego(ABC):
     }
     usuario.agregar_historial(registro)
 
-    # registros.append(registro)
-
-    # with open(ruta, "w") as archivo:
+    # registros.append(registro)    # with open(ruta, "w") as archivo:
     #     json.dump(registros, archivo, indent=4)
-        
+
   def to_dict(self) -> dict:
         """
-        Convierte el objeto Usuario en un diccionario
+        Convierte el objeto SalaDeJuego en un diccionario
 
         Returns:
-            dict: Diccionario con los atributos del objeto Usuario
+            dict: Diccionario con los atributos del objeto SalaDeJuego
         """
         return {
             "id": self._id,
             "tipo_juego": self.__class__.__name__,
             "capacidad": self._capacidad,
             "capacidad_minima": self._capacidadMinima,
-            "jugadores": [str(jugador) for jugador in self._jugadores],
+            "jugadores": [jugador.to_dict() for jugador in self._jugadores],
             "historial": self._historial,
             "estado": True if self._jugadores else False,
             "fecha_hora": str(datetime.now())

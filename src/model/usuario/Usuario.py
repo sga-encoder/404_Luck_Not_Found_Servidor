@@ -27,6 +27,8 @@ class Usuario:
     _correo: str
     _contraseña: str
     _historial: list
+    _vip: bool
+    _ciudad: str
 
     def __init__(
         self,
@@ -38,6 +40,8 @@ class Usuario:
         saldo: float = 0.0,
         total_apostado: float = 0.0,
         historial: list = [],
+        vip: bool = False,
+        ciudad:str = 'Ciudad no especificada'
     ) -> None:
         """
         Inicializa un nuevo usuario
@@ -49,12 +53,14 @@ class Usuario:
             saldo (float, optional): Saldo inicial. Por defecto 0.0
             total_apostado (float, optional): Total apostado inicial. Por defecto 0.0
             historial (list, optional): Historial de transacciones. Por defecto []
+
         """
         self.set_nombre(nombre)
         self.set_apellido(apellido)
         self.set_correo(correo)
         self.set_contraseña(contraseña)
-        self.set_id(id) 
+        self.set_id(id)
+        self.set_vip(vip) 
         self.set_saldo(saldo)
         self.set_total_apostado(total_apostado)
         self.__set_historial(historial)
@@ -75,7 +81,8 @@ class Usuario:
         total_apostado = 0.0
         historial = []
         saldo = 1000.0
-        user = cls(id, nombre, apellido, correo, contraseña, saldo, total_apostado, historial)
+        vip = False  # Default VIP status is False
+        user = cls(id, nombre, apellido, correo, contraseña, saldo, total_apostado, historial, vip)
         await servicio.agregar_usuario(user)
         return user
     
@@ -97,7 +104,7 @@ class Usuario:
         saldo = 1000.0
         total_apostado = 0.0
         historial = []
-        return cls(id, nombre, apellido, correo, contraseña, saldo, total_apostado, historial)
+        return cls(id, nombre, apellido, correo, contraseña, saldo, total_apostado, historial, vip=False)
         
 
     @classmethod
@@ -111,16 +118,19 @@ class Usuario:
         Returns:
             Usuario: Nueva instancia de Usuario
         """
+        print(data)
         id = data.get('id', '')
         nombre = data.get('nombre', '')
         apellido = data.get('apellido', '')
         saldo = data.get('saldo', 0.0)
+        vip = data.get('vip', False)
         total_apostado = data.get('total_apostado', 0.0)
         correo = data.get('correo', '')
         contraseña = data.get('contraseña', '')
         historial = data.get('historial', [])
+        
 
-        return cls(id, nombre, apellido, correo, contraseña, saldo, total_apostado, historial)
+        return cls(id, nombre, apellido, correo, contraseña, saldo, total_apostado, historial, vip)
 
     def get_id(self) -> str:
         """Retorna el ID del usuario"""
@@ -211,6 +221,15 @@ class Usuario:
             raise ValueError(
                 "El apellido no puede ser vacío o None y debe tener entre 3 y 30 caracteres"
             )
+            
+    def set_vip(self, vip: bool) -> None:
+        """
+        Establece el estado VIP del usuario
+
+        Args:
+            vip (bool): Estado VIP del usuario
+        """
+        self._vip = vip
 
     def set_saldo(self, saldo: float) -> None:
         """
@@ -224,6 +243,10 @@ class Usuario:
         """
         if not saldo < 0:
             self._saldo = saldo
+            if self._saldo >= 1000:
+                self.set_vip(True)
+            else:
+                self.set_vip(False)
         else:
             raise ValueError("El saldo no puede ser negativo")
 
@@ -312,6 +335,15 @@ class Usuario:
             raise ValueError("El monto a aumentar debe ser positivo")
 
 
+    def get_ciudad(self) -> str:
+        """
+        Retorna la ciudad del usuario
+        """
+        if self._ciudad is None or self._ciudad == "":
+            return "Ciudad no especificada"
+
+        return self._ciudad
+
     async def disminuir_saldo(self, monto: float) -> None:
         from .UsuarioServicio import UsuarioServicio
         servicio = UsuarioServicio()
@@ -365,7 +397,8 @@ class Usuario:
             "total_apostado": self._total_apostado,
             "correo": self._correo,
             "contraseña": self._contraseña,
-            "historial": self._historial
+            "historial": self._historial,
+            "vip": self._vip
         }
 
     def __repr__(self):
@@ -378,4 +411,5 @@ class Usuario:
             f"correo: {self._correo}\n"
             f"contraseña: {self._contraseña}\n"
             f"historial: {self._historial}\n"
+            f"vip: {self._vip}\n"
         )

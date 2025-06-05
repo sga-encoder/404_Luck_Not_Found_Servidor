@@ -3,7 +3,7 @@ import uuid
 from .SalaDeJuego import SalaDeJuego
 from datetime import datetime
 from ..usuario import Usuario
-from ...utils.firestore import add_data, add_data_with_id, array_remove, array_union, delete_data, get_data, update_data, get_collection_data
+from ...utils.firestore import add_data, add_data_with_id, array_remove, array_union, delete_data, get_data, update_data, get_collection_data, add_realtime_listener, add_collection_listener
 
 class SalaDeJuegoServicio:
     """
@@ -113,7 +113,7 @@ class SalaDeJuegoServicio:
         """
         return await get_collection_data('salas_de_juego_activas')
 
-    async def crear_sala_de_juego_activa(self, tipo_juego: str, jugadores: list) -> str:
+    async def crear_sala_de_juego_activa(self, sala_data: dict) -> str:
         """
         Crea una nueva sala de juego activa con ID aleatorio en Firestore.
         Args:
@@ -122,22 +122,8 @@ class SalaDeJuegoServicio:
         Returns:
             str: ID de la sala creada
         """
-        sala_id = str(uuid.uuid4())[:8]  # ID aleatorio de 8 caracteres
         
-        sala_data = {
-            "id": sala_id,
-            "tipo_juego": tipo_juego,
-            "estado": "activa",
-            "jugadores": jugadores if jugadores else [],
-            "fecha_creacion": str(datetime.now()),
-            "manos_jugadores": {} if tipo_juego == "BlackJack" else None,
-            "mano_crupier": [] if tipo_juego == "BlackJack" else None,
-            "turno_actual": 0 if jugadores else None,
-            "apuestas": {},
-            "historial": []
-        }
-        
-        await add_data_with_id('salas_de_juego_activas', sala_data, sala_id)
+        sala_id = await add_data('salas_de_juego_activas', sala_data)
         print(f'Sala de juego activa creada con ID: {sala_id}')
         return sala_id
 
@@ -157,6 +143,34 @@ class SalaDeJuegoServicio:
         await update_data('salas_de_juego_activas', sala_id, {
             'jugadores': array_union([jugador_id])
         })
+
+    def iniciar_listener_sala_especifica(self, sala_id: str, callback, error_callback=None):
+        """
+        Inicia un listener en tiempo real para una sala específica.
+        
+        Args:
+            sala_id (str): ID de la sala a escuchar
+            callback (Callable): Función que se ejecuta cuando hay cambios
+            error_callback (Callable, optional): Función que se ejecuta en caso de error
+            
+        Returns:
+            function: Función para detener el listener
+        """
+        return add_realtime_listener('salas_de_juego_activas', sala_id, callback, error_callback)
+    
+    def iniciar_listener_salas_activas(self, callback, filtros=None, error_callback=None):
+        """
+        Inicia un listener en tiempo real para todas las salas activas.
+        
+        Args:
+            callback (Callable): Función que se ejecuta cuando hay cambios
+            filtros (dict, optional): Filtros para la consulta (ej: {'tipo_juego': 'BlackJack'})
+            error_callback (Callable, optional): Función que se ejecuta en caso de error
+            
+        Returns:
+            function: Función para detener el listener
+        """
+        return add_collection_listener('salas_de_juego_activas', callback, filtros, error_callback)
 
     async def obtener_sala_activa(self, sala_id: str):
         """

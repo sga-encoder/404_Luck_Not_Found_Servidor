@@ -1,9 +1,10 @@
 import os
+import threading
 from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials, firestore_async, firestore
 from google.cloud.firestore_v1 import Increment, ArrayUnion, ArrayRemove
-from typing import List, Dict, Any, Optional
+from typing import Callable, List, Dict, Any, Optional
 
 # Variable global para controlar la inicialización
 _firebase_initialized = False
@@ -169,6 +170,112 @@ class Firestore:
         await doc_ref.delete()
         return doc_ref.id
 
+    @staticmethod
+    def add_realtime_listener(collection_name: str, document_id: str, callback: Callable, error_callback: Callable = None):
+        """
+        Agrega un listener en tiempo real para un documento específico en Firestore.
+        
+        Args:
+            collection_name (str): Nombre de la colección
+            document_id (str): ID del documento a escuchar
+            callback (Callable): Función que se ejecuta cuando hay cambios. Recibe (doc_snapshot, changes, read_time)
+            error_callback (Callable, optional): Función que se ejecuta en caso de error
+            
+        Returns:
+            function: Función para detener el listener
+        """
+        initialize_firebase()
+        
+        # Event para notificar al hilo principal
+        callback_done = threading.Event()
+        
+        def on_snapshot(doc_snapshot, changes, read_time):
+            """Callback interno que maneja los cambios del documento"""
+            try:
+                if doc_snapshot:
+                    for doc in doc_snapshot:
+                        print(f"📡 Cambio detectado en documento: {doc.id}")
+                        # Llamar al callback del usuario
+                        callback(doc_snapshot, changes, read_time)
+                else:
+                    print(f"📡 Documento {document_id} no existe o fue eliminado")
+                    callback(None, changes, read_time)
+                    
+            except Exception as e:
+                print(f"❌ Error en listener: {e}")
+                if error_callback:
+                    error_callback(e)
+            finally:
+                callback_done.set()
+        
+        # Crear referencia al documento
+        db = firestore.client()  # Cliente síncrono para listeners
+        doc_ref = db.collection(collection_name).document(document_id)
+        
+        # Iniciar el listener
+        doc_watch = doc_ref.on_snapshot(on_snapshot)
+        
+        print(f"🎧 Listener iniciado para {collection_name}/{document_id}")
+        
+        # Retornar función para detener el listener
+        return doc_watch.unsubscribe
+    
+    @staticmethod
+    def add_collection_listener(collection_name: str, callback: Callable, query_filter: Dict = None, error_callback: Callable = None):
+        """
+        Agrega un listener en tiempo real para una colección completa en Firestore.
+        
+        Args:
+            collection_name (str): Nombre de la colección
+            callback (Callable): Función que se ejecuta cuando hay cambios
+            query_filter (Dict, optional): Filtros para la consulta (ej: {'estado': 'activa'})
+            error_callback (Callable, optional): Función que se ejecuta en caso de error
+            
+        Returns:
+            function: Función para detener el listener
+        """
+        initialize_firebase()
+        
+        callback_done = threading.Event()
+        
+        def on_snapshot(col_snapshot, changes, read_time):
+            """Callback interno que maneja los cambios de la colección"""
+            try:
+                docs_data = []
+                for doc in col_snapshot:
+                    doc_data = doc.to_dict()
+                    doc_data['id'] = doc.id  # Agregar el ID al documento
+                    docs_data.append(doc_data)
+                
+                print(f"📡 Cambios detectados en colección {collection_name}: {len(changes)} cambios")
+                
+                # Llamar al callback del usuario
+                callback(docs_data, changes, read_time)
+                
+            except Exception as e:
+                print(f"❌ Error en listener de colección: {e}")
+                if error_callback:
+                    error_callback(e)
+            finally:
+                callback_done.set()
+        
+        # Crear referencia a la colección
+        db = firestore.client()
+        collection_ref = db.collection(collection_name)
+        
+        # Aplicar filtros si se proporcionan
+        if query_filter:
+            for field, value in query_filter.items():
+                collection_ref = collection_ref.where(field, '==', value)
+        
+        # Iniciar el listener
+        col_watch = collection_ref.on_snapshot(on_snapshot)
+        
+        print(f"🎧 Listener de colección iniciado para {collection_name}")
+        
+        # Retornar función para detener el listener
+        return col_watch.unsubscribe
+
 # Funciones de ayuda para operaciones de Firestore
 def increment(num: float):
     """Incrementa un valor numérico en Firestore."""
@@ -214,3 +321,12 @@ async def update_data(collection_name: str, id: str, data: dict) -> str:
 async def delete_data(collection_name: str, id: str) -> str:
     """Elimina un documento."""
     return await Firestore.delete_data(collection_name, id)
+
+# Funciones de listener en tiempo real
+def add_realtime_listener(collection_name: str, document_id: str, callback: Callable, error_callback: Callable = None):
+    """Agrega un listener en tiempo real para un documento."""
+    return Firestore.add_realtime_listener(collection_name, document_id, callback, error_callback)
+
+def add_collection_listener(collection_name: str, callback: Callable, query_filter: Dict = None, error_callback: Callable = None):
+    """Agrega un listener en tiempo real para una colección."""
+    return Firestore.add_collection_listener(collection_name, callback, query_filter, error_callback)
