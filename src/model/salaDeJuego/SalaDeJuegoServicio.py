@@ -19,7 +19,6 @@ class SalaDeJuegoServicio:
         sala_id = await add_data('salas_de_juego_activas', sala.__dict__)
         print(f'Sala de juego agregada con ID: {sala_id}')
         
-
     async def eliminar_sala_de_juego(self, id: str) -> None:
         """
         Elimina una sala de juego de la colección 'salas_de_juego' en Firestore.
@@ -38,6 +37,7 @@ class SalaDeJuegoServicio:
         """
         sala_id = await update_data('salas_de_juego', id, sala_de_juego_dict)
         print(f'Sala de juego actualizada con ID: {sala_id}')
+        
     async def agregar_jugador_a_lista_de_espera(self, id: str, usuario: Usuario):
         """
         Agrega un usuario a la lista de espera de una sala de juego.
@@ -45,8 +45,19 @@ class SalaDeJuegoServicio:
             id (str): ID de la sala de juego.
             usuario (Usuario): Instancia del usuario que se agrega a la lista de espera.
         """
-        sala_id = await update_data('salas_de_juego_activas', id, {'listaDeEspera': array_union([usuario.get_id()])})
-        print(f'Usuario {usuario.get_id()} agregado a la lista de espera de la sala de juego con ID: {sala_id}')
+        try:
+            # Verificar que la sala existe antes de intentar actualizar
+            sala_existente = await get_data('salas_de_juego_activas', id)
+            if not sala_existente:
+                print(f'Error: La sala con ID {id} no existe en Firestore')
+                return None
+            
+            sala_id = await update_data('salas_de_juego_activas', id, {'listaDeEspera': array_union([usuario.get_id()])})
+            print(f'Usuario {usuario.get_id()} agregado a la lista de espera de la sala de juego con ID: {sala_id}')
+            return sala_id
+        except Exception as e:
+            print(f'Error al intentar agregar usuario a la lista de espera de la sala {id}: {str(e)}')
+            return None
         
     async def eliminar_jugador_de_lista_de_espera(self, id: str, usuario: Usuario):
         """
@@ -57,7 +68,11 @@ class SalaDeJuegoServicio:
         """
         sala_id = await update_data('salas_de_juego_activas', id, {'listaDeEspera': array_remove([usuario.get_id()])})
         print(f'Usuario {usuario.get_id()} eliminado de la lista de espera de la sala de juego con ID: {sala_id}')
-        
+
+    async def actualizar_jugador_activo(self, id: str, usuario: Usuario):
+        sala_de_juego = await update_data('salas_de_juego_activas', id, {'turnoActivo': usuario.get_id()})
+        print(f'Saldo actualizado con ID: {sala_de_juego}')
+            
     async def entrar_sala_de_juego(self, id: str, usuario: Usuario):
         """
         Permite que un usuario entre a una sala de juego.
@@ -65,8 +80,19 @@ class SalaDeJuegoServicio:
             id (str): ID de la sala de juego.
             usuario (Usuario): Instancia del usuario que entra a la sala.
         """
-        sala_id = await update_data('salas_de_juego_activas', id, {'jugadores': array_union([usuario.get_id()])})
-        print(f'Usuario {usuario.get_id()} agregado a la sala de juego con ID: {sala_id}')
+        try:
+            # Verificar que la sala existe antes de intentar actualizar
+            sala_existente = await get_data('salas_de_juego_activas', id)
+            if not sala_existente:
+                print(f'Error: La sala con ID {id} no existe en Firestore')
+                return None
+            
+            sala_id = await update_data('salas_de_juego_activas', id, {'jugadores': array_union([usuario.get_id()])})
+            print(f'Usuario {usuario.get_id()} agregado a la sala de juego con ID: {sala_id}')
+            return sala_id
+        except Exception as e:
+            print(f'Error al intentar agregar usuario a la sala {id}: {str(e)}')
+            return None
     
     async def salir_sala_de_juego(self, id: str, usuario: Usuario):
         """
@@ -77,6 +103,7 @@ class SalaDeJuegoServicio:
         """
         sala_id = await update_data('salas_de_juego_activas', id, {'jugadores': array_remove([usuario.get_id()])})
         print(f'Usuario {usuario.get_id()} eliminado de la sala de juego con ID: {sala_id}')
+        
     async def agregar_en_historial_sala_de_juego(self, id: str, historial: list) -> None:
         """
         Agrega un nuevo registro al historial de una sala de juego en la colección 'salas_de_juego' en Firestore.
@@ -177,3 +204,9 @@ class SalaDeJuegoServicio:
         Obtiene los datos de una sala activa.
         """
         return await get_data('salas_de_juego_activas', sala_id)
+    
+    async def actualizar_sala_activa(self, sala_id: str, datos: dict):
+        """
+        Actualiza los datos de una sala activa.
+        """
+        return await update_data('salas_de_juego_activas', sala_id, datos)

@@ -14,9 +14,9 @@ class KnuckleBones(SalaDeJuego):
     def __init__(self):
         # from cliente.utils.user_session import UserSessionManager
         # usuario_data = UserSessionManager().load_user_session()
-        super().__init__(1, 1)
+        super().__init__(2, 2)  # KnuckleBones requiere exactamente 2 jugadores
         # Inicializar el _id como None hasta que se establezca
-        self._id = None
+        self.set_juego('KnuckleBones')
         self._mesa_de_juego = [
             [
                 [0, 0, 0], 
@@ -270,6 +270,19 @@ class KnuckleBones(SalaDeJuego):
             except Exception as e:
                 print(f"Error al sincronizar estado con Firestore: {e}")
 
+    async def actualizar_jugador_activo(self, id: str, usuario: Usuario):
+        """
+        Actualiza el jugador activo en Firestore usando el servicio
+        Args:
+            id (str): ID de la sala de juego
+            usuario (Usuario): Usuario que será el turno activo
+        """
+        try:
+            servicio = SalaDeJuegoServicio()
+            await servicio.actualizar_jugador_activo(id, usuario)
+        except Exception as e:
+            print(f"Error al actualizar jugador activo: {e}")
+
     def juego(self)-> str:
         index_activo = self.get_jugador_activo_index()
         index_oponente = self.get_oponente_index()
@@ -282,19 +295,26 @@ class KnuckleBones(SalaDeJuego):
             if(self._turno > 0 and self._turno % 2 != 0):
                 historial = self.knuckle_bot(dado, self._mesa_de_juego)
                 self._historial.append(historial)
-                posicion = historial['posicion']
-
-                # print(f'El bot eligió la posición {posicion+1}')
+                posicion = historial['posicion']                # print(f'El bot eligió la posición {posicion+1}')
                 
             else:
                 posicion = int(input('Ingrese la posición donde desea poner el dado (1,2,3): '))-1
-                self.poner_dado(self._mesa_de_juego[index_activo], posicion, dado)
+                
+            self.poner_dado(self._mesa_de_juego[index_activo], posicion, dado)
             self.__eliminar_dado(self._mesa_de_juego[index_oponente], posicion, dado)
             self.cambiar_jugador_activo() 
             self._turno += 1
             return self.juego()
 
     def print_mesa(self):
+        # Verificar que hay suficientes jugadores
+        if len(self._jugadores) < 2:
+            print("No hay suficientes jugadores para mostrar la mesa.")
+            return
+            
+        # Verificar que el turno activo no es None
+        turno_activo_id = self._turnoActivo.get_id() if self._turnoActivo else "Sin turno"
+        
         string = (
             f"        {self._jugadores[1].get_id()}\n"
             f" ╔═════╤═════╤═════╗\n"
@@ -306,14 +326,13 @@ class KnuckleBones(SalaDeJuego):
             f" ╠═════╪═════╪═════╣     ║  {self.__get_position(0,False)+1}  │  {self.__get_position(1,False)+1}  │  {self.__get_position(2,False)+1}  ║\n"
             f" ║  {self._mesa_de_juego[0][0][0]}  │  {self._mesa_de_juego[0][1][0]}  │  {self._mesa_de_juego[0][2][0]}  ║     ║     │     │     ║\n"
             f" ╟─────┼─────┼─────╢     ║     │     │     ║\n"
-            f" ║  {self._mesa_de_juego[0][0][1]}  │  {self._mesa_de_juego[0][1][1]}  │  {self._mesa_de_juego[0][2][1]}  ║     ╚═════╧═════╧═════╝\n"
-            f" ╟─────┼─────┼─────╢       Jugador Activo:\n"
-            f" ║  {self._mesa_de_juego[0][0][2]}  │  {self._mesa_de_juego[0][1][2]}  │  {self._mesa_de_juego[0][2][2]}  ║           {self._turnoActivo.get_id()}\n"
+            f" ║  {self._mesa_de_juego[0][0][1]}  │  {self._mesa_de_juego[0][1][1]}  │  {self._mesa_de_juego[0][2][1]}  ║     ╚═════╧═════╧═════╝\n"            f" ╟─────┼─────┼─────╢       Jugador Activo:\n"
+            f" ║  {self._mesa_de_juego[0][0][2]}  │  {self._mesa_de_juego[0][1][2]}  │  {self._mesa_de_juego[0][2][2]}  ║           {turno_activo_id}\n"
             f" ╚═════╧═════╧═════╝\n"
             f"        {self._jugadores[0].get_id()}\n")
         print(string)
-
-    def inicializar_juego(self, juego):
+    
+    def inicializar_juego(self):
         """
         Implementación del método abstracto de SalaDeJuego
         """
@@ -325,24 +344,111 @@ class KnuckleBones(SalaDeJuego):
         # Establecer el turno activo al primer jugador
         self._turnoActivo = self._jugadores[0]
         
-        if juego == 'KnuckleBones':
-            print(f"🎲 Iniciando KnuckleBones entre {self._jugadores[0].get_nombre()} y {self._jugadores[1].get_nombre()}")
-            print(self.juego())
-            print(self._historial)
-        else:
-            print("El juego no es KnuckleBones")
-            return False
+        # KnuckleBones siempre es KnuckleBones
+        print(f"🎲 Iniciando KnuckleBones entre {self._jugadores[0].get_nombre()} y {self._jugadores[1].get_nombre()}")
+        print(self.juego())
+        print(self._historial)
+        return True
+    
+    def jugar_turno(self, usuario):
+        return super().jugar_turno(usuario)
+            
+    def _mesa_a_listas_planas(self, mesa_de_juego: list = None) -> dict:
+        """
+        Convierte la mesa de juego 3D a dos listas planas de 9 posiciones cada una
+        Returns: dict con 'jugador_0' y 'jugador_1' como listas de 9 elementos
+        """
+        if mesa_de_juego is None:
+            mesa_de_juego = self._mesa_de_juego
+            
+        jugador_0 = []
+        jugador_1 = []
         
+        # Convertir mesa del jugador 0 (fila por fila)
+        for columna in range(3):
+            for fila in range(3):
+                jugador_0.append(mesa_de_juego[0][columna][fila])
+                
+        # Convertir mesa del jugador 1 (fila por fila)
+        for columna in range(3):
+            for fila in range(3):
+                jugador_1.append(mesa_de_juego[1][columna][fila])
+                
+        return {
+            'jugador_0': jugador_0,
+            'jugador_1': jugador_1
+        }
+
+    def _listas_planas_a_mesa(self, jugador_0: list, jugador_1: list) -> list:
+        """
+        Convierte dos listas planas de 9 posiciones a la estructura 3D de la mesa
+        Args:
+            jugador_0: Lista de 9 elementos del jugador 0
+            jugador_1: Lista de 9 elementos del jugador 1
+        Returns: Mesa de juego en formato 3D [2][3][3]
+        """
+        if len(jugador_0) != 9 or len(jugador_1) != 9:
+            raise ValueError("Cada lista debe tener exactamente 9 elementos")
+            
+        mesa = [
+            [
+                [0, 0, 0],
+                [0, 0, 0], 
+                [0, 0, 0]
+            ],
+            [
+                [0, 0, 0],
+                [0, 0, 0],
+                [0, 0, 0]
+            ]
+        ]
+        
+        # Reconstruir mesa del jugador 0
+        index = 0
+        for columna in range(3):
+            for fila in range(3):
+                mesa[0][columna][fila] = jugador_0[index]
+                index += 1
+                
+        # Reconstruir mesa del jugador 1
+        index = 0
+        for columna in range(3):
+            for fila in range(3):
+                mesa[1][columna][fila] = jugador_1[index]
+                index += 1
+                
+        return mesa
+
     def to_dict(self):
         # Obtener los atributos de la clase padre
         parent_dict = super().to_dict()
         
+        # Convertir mesa de juego a formato plano
+        mesa_plana = self._mesa_a_listas_planas()
+        
+        # Serializar el historial de KnuckleBones para evitar arrays anidados
+        historial_serializado = []
+        for entrada in self._historial:
+            if isinstance(entrada, dict):
+                # Convertir arrays anidados a strings o valores simples
+                entrada_serializada = {}
+                for key, value in entrada.items():
+                    if isinstance(value, list):
+                        # Convertir listas a strings para evitar arrays anidados
+                        entrada_serializada[key] = str(value) if value else "[]"
+                    else:
+                        entrada_serializada[key] = value
+                historial_serializado.append(entrada_serializada)
+            else:
+                historial_serializado.append(str(entrada))
+        
         # Agregar los atributos específicos de KnuckleBones
         parent_dict.update({
-            'mesa_de_juego': self._mesa_de_juego,
+            'mesa_jugador_0': mesa_plana['jugador_0'],
+            'mesa_jugador_1': mesa_plana['jugador_1'],
             'cantidad_de_dados_puestos': self._cantidad_de_dados_puestos,
             'turno': self._turno,
-            'historial': self._historial
+            'historial_knucklebones': historial_serializado
         })
         
         return parent_dict
@@ -350,37 +456,37 @@ class KnuckleBones(SalaDeJuego):
     @classmethod
     def from_dict(cls, data: dict):
         """
-        Método específico de KnuckleBones para crear instancia desde diccionario
+        Constructor simple de KnuckleBones desde diccionario
         """
-        # Crear una nueva instancia usando el constructor sin parámetros
         instance = cls()
         
-        # Sobrescribir los valores con los del diccionario
-        # Asegurar que _capacidadMinima tenga un valor válido
+        # Atributos de SalaDeJuego
+        instance._id = data.get('id')
         instance._capacidad = data.get('capacidad', 2)
         instance._capacidadMinima = data.get('capacidad_minima', 2)
-        
-        # Asignar otros atributos del padre
-        instance._id = data.get('id')
+        instance._juego = data.get('juego', 'KnuckleBones')
         instance._jugadores = data.get('jugadores', [])
-        instance._turnoActivo = data.get('turnoActivo', None)
+        instance._turnoActivo = data.get('turnoActivo')
+        instance._SalaDeJuego__listaDeEspera = data.get('listaDeEspera', [])
+        instance._apuestas = data.get('apuestas', [])
         instance._historial = data.get('historial', [])
         
+        # Fecha de inicio
         from datetime import datetime
         fecha_str = data.get('fechaHoraInicio', datetime.now().isoformat())
         if isinstance(fecha_str, str):
             instance._fechaHoraInicio = datetime.fromisoformat(fecha_str)
         else:
-            instance._fechaHoraInicio = fecha_str
-            
-        instance._SalaDeJuego__listaDeEspera = data.get('listaDeEspera', [])
-        instance._apuestas = data.get('apuestas', [])
+            instance._fechaHoraInicio = fecha_str or datetime.now()
         
-        # Asignar atributos específicos de KnuckleBones si existen
-        instance._mesa_de_juego = data.get('mesa_de_juego', instance._mesa_de_juego)
-        instance._cantidad_de_dados_puestos = data.get('cantidad_de_dados_puestos', instance._cantidad_de_dados_puestos)
-        instance._turno = data.get('turno', instance._turno)
-        # No sobrescribir self._historial ya que es diferente del historial de SalaDeJuego
+        # Usar conversor para reconstruir mesa
+        mesa_0 = data.get('mesa_jugador_0', [0] * 9)
+        mesa_1 = data.get('mesa_jugador_1', [0] * 9)
+        instance._mesa_de_juego = instance._listas_planas_a_mesa(mesa_0, mesa_1)
+        
+        # Atributos específicos de KnuckleBones
+        instance._cantidad_de_dados_puestos = data.get('cantidad_de_dados_puestos', [0, 0])
+        instance._turno = data.get('turno', 0)
         
         return instance
 

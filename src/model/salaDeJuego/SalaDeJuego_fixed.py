@@ -215,6 +215,7 @@ class SalaDeJuego(ABC):
     Devuelve una lista de jugadores actualmente activos en la sala.
     """
     return [jugador for jugador in self._jugadores if jugador is not None]
+
   @abstractmethod
   def inicializar_juego(self):
     """

@@ -5,7 +5,6 @@ import firebase_admin
 from firebase_admin import credentials, firestore_async, firestore
 from google.cloud.firestore_v1 import Increment, ArrayUnion, ArrayRemove
 from typing import Callable, List, Dict, Any, Optional
-from .pretty_printer import PrettyPrinter
 
 # Variable global para controlar la inicialización
 _firebase_initialized = False
@@ -168,11 +167,149 @@ class Firestore:
 
         Returns:
             str: ID del documento eliminado.
-        """        
+        """
         db = await Firestore.get_async_client()
         doc_ref = db.collection(collection_name).document(id)
         await doc_ref.delete()
         return doc_ref.id
+
+    @staticmethod
+    def _print_dynamic_data(data, indent="", max_depth=3, current_depth=0):
+        """
+        Imprime datos de forma dinámica, adaptándose a cualquier estructura.
+        
+        Args:
+            data: Los datos a imprimir (dict, list, o valor simple)
+            indent: Indentación actual
+            max_depth: Profundidad máxima para evitar recursión infinita
+            current_depth: Profundidad actual
+        """
+        if current_depth > max_depth:
+            print(f"{indent}[Datos muy profundos, truncados...]")
+            return
+        
+        if isinstance(data, dict):
+            # Determinar el tipo de documento dinámicamente
+            doc_type = Firestore._detect_document_type(data)
+            if doc_type and current_depth == 0:
+                print(f"{indent}🏷️  Tipo detectado: {doc_type}")
+            
+            for key, value in data.items():
+                icon = Firestore._get_field_icon(key, value)
+                
+                if isinstance(value, dict):
+                    print(f"{indent}{icon} {key}:")
+                    Firestore._print_dynamic_data(value, indent + "   ", max_depth, current_depth + 1)
+                elif isinstance(value, list):
+                    print(f"{indent}{icon} {key}: [{len(value)} elementos]")
+                    if len(value) <= 5:  # Mostrar solo si hay pocos elementos
+                        for i, item in enumerate(value):
+                            if isinstance(item, (dict, list)):
+                                print(f"{indent}   [{i}]:")
+                                Firestore._print_dynamic_data(item, indent + "      ", max_depth, current_depth + 1)
+                            else:
+                                print(f"{indent}   [{i}] {item}")
+                    else:
+                        # Mostrar solo los primeros elementos
+                        for i in range(3):
+                            if isinstance(value[i], (dict, list)):
+                                print(f"{indent}   [{i}]:")
+                                Firestore._print_dynamic_data(value[i], indent + "      ", max_depth, current_depth + 1)
+                            else:
+                                print(f"{indent}   [{i}] {value[i]}")
+                        print(f"{indent}   ... y {len(value) - 3} más")
+                else:
+                    # Valor simple
+                    formatted_value = Firestore._format_value(value)
+                    print(f"{indent}{icon} {key}: {formatted_value}")
+        
+        elif isinstance(data, list):
+            for i, item in enumerate(data):
+                print(f"{indent}[{i}]:")
+                Firestore._print_dynamic_data(item, indent + "   ", max_depth, current_depth + 1)
+        else:
+            print(f"{indent}{Firestore._format_value(data)}")
+    
+    @staticmethod
+    def _detect_document_type(data):
+        """Detecta el tipo de documento basado en sus campos"""
+        if not isinstance(data, dict):
+            return None
+        
+        # Detectar diferentes tipos de documentos
+        if 'juego' in data and 'jugadores' in data:
+            return f"Sala de Juego - {data.get('juego', 'Desconocido')}"
+        elif 'nombre' in data and 'email' in data:
+            return "Usuario"
+        elif 'partida_id' in data and 'movimiento' in data:
+            return "Movimiento de Juego"
+        elif 'cartas' in data or 'tablero' in data:
+            return "Estado de Partida"
+        elif 'timestamp' in data and 'evento' in data:
+            return "Evento/Log"
+        else:
+            return "Documento Genérico"
+    
+    @staticmethod
+    def _get_field_icon(field_name, value):
+        """Obtiene un icono apropiado para el campo basado en su nombre y valor"""
+        field_lower = field_name.lower()
+        
+        # Iconos basados en el nombre del campo
+        if 'id' in field_lower:
+            return "🆔"
+        elif field_lower in ['juego', 'game', 'tipo_juego']:
+            return "🎮"
+        elif field_lower in ['jugadores', 'players', 'usuarios']:
+            return "👥"
+        elif field_lower in ['estado', 'status', 'state']:
+            return "🎯"
+        elif field_lower in ['turno', 'turn', 'turno_actual']:
+            return "⏰"
+        elif field_lower in ['fecha', 'timestamp', 'date', 'time', 'fecha_hora']:
+            return "📅"
+        elif field_lower in ['cartas', 'cards', 'mano']:
+            return "🃏"
+        elif field_lower in ['tablero', 'board', 'mesa']:
+            return "🎲"
+        elif field_lower in ['puntos', 'score', 'puntaje']:
+            return "🏆"
+        elif field_lower in ['dinero', 'money', 'coins', 'creditos']:
+            return "💰"
+        elif field_lower in ['nivel', 'level', 'rango']:
+            return "⭐"
+        elif field_lower in ['capacidad', 'max', 'limite']:
+            return "📏"
+        elif field_lower in ['activo', 'active', 'online']:
+            return "🟢" if value else "🔴"
+        elif field_lower in ['historial', 'history', 'log']:
+            return "📚"
+        elif isinstance(value, bool):
+            return "✅" if value else "❌"
+        elif isinstance(value, (int, float)) and value == 0:
+            return "0️⃣"
+        elif isinstance(value, list):
+            return "📋"
+        elif isinstance(value, dict):
+            return "📁"
+        else:
+            return "📄"
+    
+    @staticmethod
+    def _format_value(value):
+        """Formatea un valor para mostrar de forma más legible"""
+        if value is None:
+            return "❌ None"
+        elif isinstance(value, bool):
+            return "✅ True" if value else "❌ False"
+        elif isinstance(value, str) and len(value) > 50:
+            return f'"{value[:47]}..."'
+        elif isinstance(value, str):
+            return f'"{value}"'
+        elif isinstance(value, (int, float)):
+            return str(value)
+        else:
+            return str(value)
 
     @staticmethod
     def add_realtime_listener(collection_name: str, document_id: str, callback: Callable, error_callback: Callable = None, test: bool = False):
@@ -192,6 +329,7 @@ class Firestore:
         
         # Event para notificar al hilo principal
         callback_done = threading.Event()
+        
         def on_snapshot(doc_snapshot, changes, read_time):
             """Callback interno que maneja los cambios del documento"""
             try:
@@ -215,7 +353,7 @@ class Firestore:
                     if test:
                         if doc_data:
                             print("   📊 Datos detallados del documento:")
-                            PrettyPrinter.print_dynamic_data(doc_data, indent="      ")
+                            Firestore._print_dynamic_data(doc_data, indent="      ")
                         
                 else:
                     print(f"📡 Documento {document_id} no existe o fue eliminado")
@@ -237,112 +375,8 @@ class Firestore:
         
         # Retornar función para detener el listener
         return doc_watch.unsubscribe
-    
-    @staticmethod
-    def add_collection_listener(collection_name: str, callback: Callable, query_filter: Dict = None, error_callback: Callable = None):
-        """
-        Agrega un listener en tiempo real para una colección completa en Firestore.
-        
-        Args:
-            collection_name (str): Nombre de la colección
-            callback (Callable): Función que se ejecuta cuando hay cambios
-            query_filter (Dict, optional): Filtros para la consulta (ej: {'estado': 'activa'})
-            error_callback (Callable, optional): Función que se ejecuta en caso de error
-            
-        Returns:
-            function: Función para detener el listener
-        """
-        initialize_firebase()
-        
-        callback_done = threading.Event()
-        
-        def on_snapshot(col_snapshot, changes, read_time):
-            """Callback interno que maneja los cambios de la colección"""
-            try:
-                docs_data = []
-                for doc in col_snapshot:
-                    doc_data = doc.to_dict()
-                    doc_data['id'] = doc.id  # Agregar el ID al documento
-                    docs_data.append(doc_data)
-                
-                print(f"📡 Cambios detectados en colección {collection_name}: {len(changes)} cambios")
-                
-                # Llamar al callback del usuario
-                callback(docs_data, changes, read_time)
-                
-            except Exception as e:
-                print(f"❌ Error en listener de colección: {e}")
-                if error_callback:
-                    error_callback(e)
-            finally:
-                callback_done.set()        # Crear referencia a la colección
-        db = firestore.client()
-        collection_ref = db.collection(collection_name)
-        
-        # Aplicar filtros si se proporcionan
-        if query_filter:
-            for field, value in query_filter.items():
-                collection_ref = collection_ref.where(field, '==', value)
-        
-        # Iniciar el listener
-        col_watch = collection_ref.on_snapshot(on_snapshot)
-        
-        print(f"🎧 Listener de colección iniciado para {collection_name}")
-        
-        # Retornar función para detener el listener
-        return col_watch.unsubscribe
-
-# Funciones de ayuda para operaciones de Firestore
-def increment(num: float):
-    """Incrementa un valor numérico en Firestore."""
-    return Increment(num)
-
-def decrement(num: float):
-    """Decrementa un valor numérico en Firestore."""
-    return Increment(-num)
-
-def array_union(array: list):
-    """Añade elementos a un array sin duplicados."""
-    return ArrayUnion(array)
-
-def array_remove(array: list):
-    """Remueve elementos de un array."""
-    return ArrayRemove(array)
 
 # Funciones globales para mantener compatibilidad con código existente
-async def get_async_firestore_client():
-    """Obtiene el cliente asíncrono de Firestore."""
-    return await Firestore.get_async_client()
-
-async def add_data(collection_name: str, data: dict) -> str:
-    """Agrega un documento a una colección."""
-    return await Firestore.add_data(collection_name, data)
-
-async def add_data_with_id(collection_name: str, data: dict, id: str) -> str:
-    """Agrega un documento con ID específico."""
-    return await Firestore.add_data_with_id(collection_name, data, id)
-
-async def get_data(collection_name: str, id: str) -> Optional[Dict[str, Any]]:
-    """Obtiene un documento por ID."""
-    return await Firestore.get_data(collection_name, id)
-
-async def get_collection_data(collection_name: str) -> List[Optional[Dict[str, Any]]]:
-    """Obtiene todos los documentos de una colección."""
-    return await Firestore.get_collection_data(collection_name)
-
-async def update_data(collection_name: str, id: str, data: dict) -> str:
-    """Actualiza un documento."""
-    return await Firestore.update_data(collection_name, id, data)
-
-async def delete_data(collection_name: str, id: str) -> str:
-    """Elimina un documento."""
-    return await Firestore.delete_data(collection_name, id)
-
-# Funciones de listener en tiempo real
 def add_realtime_listener(collection_name: str, document_id: str, callback: Callable, error_callback: Callable = None, test: bool = False):
     """Agrega un listener en tiempo real para un documento."""
     return Firestore.add_realtime_listener(collection_name, document_id, callback, error_callback, test)
-
-def add_collection_listener(collection_name: str, callback: Callable, query_filter: Dict = None, error_callback: Callable = None ):
-    """Agrega un listener en tiempo real para una colección."""
-    return Firestore.add_collection_listener(collection_name, callback, query_filter, error_callback)
