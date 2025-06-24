@@ -12,10 +12,10 @@ class SalaDeJuego(ABC):
   _capacidadMinima: int
   _jugadores: list
   _turnoActivo: Usuario = None
-  _historial: list
   _fechaHoraInicio: datetime
   _listaDeEspera: list
   _apuestas: list
+  _historial: list
   
   def __init__(self, capacidad: int, capacidadMinima: int):
     self.set_juego('')
@@ -48,7 +48,6 @@ class SalaDeJuego(ABC):
     instance.set_apuestas(data.get('apuestas', []))
 
     return instance
-    
 
   def get_juego(self) -> str:
     return self._juego
@@ -76,7 +75,7 @@ class SalaDeJuego(ABC):
     # Inicializar el turno activo al primer jugador
     if jugadores and len(jugadores) > 0:
         self.set_turnoActivo(jugadores[0])
-        
+
   def get_jugador_activo_index(self) -> int:
     turno_activo = self.get_turnoActivo()
     if turno_activo is None:
@@ -88,7 +87,7 @@ class SalaDeJuego(ABC):
 
   def get_turnoActivo(self) -> Usuario:
     return self._turnoActivo
-  
+
   def set_turnoActivo(self, turnoActivo: Usuario = None):
     """Versión síncrona que solo actualiza localmente"""
     if turnoActivo is None:
@@ -96,16 +95,15 @@ class SalaDeJuego(ABC):
       return
     
     self._turnoActivo = turnoActivo
-  
+
   async def set_turnoActivo_async(self, id: str, turnoActivo: Usuario = None):
     """Versión asíncrona que actualiza en Firestore"""
     if turnoActivo is None:
       self._turnoActivo = self._jugadores[0] if self._jugadores else None
       return
-    
+
     await self.actualizar_jugador_activo(id, turnoActivo)
     self._turnoActivo = turnoActivo
-      
 
   def get_historial(self) -> list:
     return self._historial
@@ -127,17 +125,17 @@ class SalaDeJuego(ABC):
 
   def get_apuestas(self) -> list:
     return self._apuestas
-    
+
   def set_apuestas(self, apuestas: list):
     self._apuestas = apuestas
-    
+
   async def crear_sala_de_juego(self, diccionario: dict) -> str:
     from servidor.src.model.salaDeJuego.SalaDeJuegoServicio import SalaDeJuegoServicio
     servicio = SalaDeJuegoServicio()
     # Ahora esta función es async para usar await correctamente
     sala_id = await servicio.crear_sala_de_juego_activa(diccionario)
     return sala_id
-    
+
   async def entrar_sala_de_juego(self, usuario: Usuario, diccionario: dict = None) -> tuple:
     """
     Permite que un usuario entre a la sala de juego.
@@ -198,7 +196,7 @@ class SalaDeJuego(ABC):
             print(f"{siguiente_usuario} ha entrado a la sala de juego desde la lista de espera.")
     else:
         print(f"{usuario} no está en la sala de juego.")
-  
+
   def pagar_apuesta(self, usuario: Usuario, monto: float):
     """
     Registra y procesa el pago de una apuesta por parte de un jugador.
@@ -209,17 +207,18 @@ class SalaDeJuego(ABC):
 
     self._apuestas.append({"usuario": usuario, "monto": monto})
     print(f"{usuario} ha realizado una apuesta de {monto}.")
-  
+
   def get_jugadores_activos(self) -> list:
     """
     Devuelve una lista de jugadores actualmente activos en la sala.
     """
     return [jugador for jugador in self._jugadores if jugador is not None]
+
   @abstractmethod
   def inicializar_juego(self):
     """
     Método abstracto para inicializar el juego.
-    Cada juego de cartas debe implementar su propia lógica.
+    Cada juego debe implementar su propia lógica.
     """
     pass
   
@@ -227,15 +226,15 @@ class SalaDeJuego(ABC):
   def jugar_turno(self, usuario: Usuario):
     """
     Método abstracto para manejar el turno de un jugador.
-    Cada juego de cartas debe implementar su propia lógica.
+    Cada juego debe implementar su propia lógica.
     """
     pass
   
   @abstractmethod
-  async def actualizar_jugador_activo(self, id: str, usuario: Usuario):
+  async def actualizar_instancia(self, data: dict):
     """
-    Método abstracto para actualizar el jugador activo en Firestore.
-    Cada juego debe implementar su propia lógica para actualizar el estado.
+    Método abstracto para actualizar la instancia local de la sala de juego.
+    Cada juego debe implementar su propia lógica.
     """
     pass
   
